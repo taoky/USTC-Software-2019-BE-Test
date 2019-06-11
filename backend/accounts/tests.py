@@ -22,12 +22,12 @@ class AuthTests(TestCase):
         response = self.client.post(reverse('accounts:login'), request)
         self.assertEqual(response.status_code, 200)
 
-    def test_register_then_login_then_logout(self):
+    def test_login_then_logout(self):
         self._test_register_and_login()
         response = self.client.get(reverse('accounts:logout'))
         self.assertEqual(response.status_code, 200)
 
-    def test_login_then_show_profile_then_edit_profile_then_show_profile(self):
+    def test_show_profile_then_edit_profile_then_show_profile(self):
         self._test_register_and_login()
         request = {'profile': json.dumps({'method': 'show'})}
         response = self.client.post(reverse('accounts:profile'), request)
@@ -56,4 +56,24 @@ class AuthTests(TestCase):
             'last_name': 'last',
             'email': 'testtest@test'
         }
+        self.assertEqual(json.loads(response.content), test_profile)
+
+    def test_edit_profile_with_invailed_password(self):
+        self._test_register_and_login()
+        request = {
+            'profile': json.dumps({
+                'method': 'edit',
+                'new_profile': {
+                    'password': 'new'
+                }
+            })
+        }
+        response = self.client.post(reverse('accounts:profile'), request)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(json.loads(response.content)['error_code'], 400001)
+        request = {'profile': json.dumps({'method': 'show'})}
+        response = self.client.post(reverse('accounts:profile'), request)
+        self.assertEqual(response.status_code, 200)
+        test_profile = self._test_user_info.copy()
+        test_profile.pop('password')
         self.assertEqual(json.loads(response.content), test_profile)
