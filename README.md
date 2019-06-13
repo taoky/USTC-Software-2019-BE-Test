@@ -114,6 +114,7 @@ request.data = {
 
 可能的错误码与错误信息如下：
 - `409001 duplicate username`：用户名与已有用户重复
+- `400001 invailed password`：所希望设定的新密码不合法
 
 #### Examples
 

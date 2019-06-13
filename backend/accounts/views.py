@@ -28,7 +28,7 @@ def backend_logout(request):
     return JsonResponse({}, status=200)
 
 
-def backend_register(request):
+def backend_register(request):  # TODO: Password invailed
     """Use `username`, `password` and `email` in request.POST['register_info']
     to register"""
     register_info_all = json.loads(request.POST['register_info'])
@@ -43,6 +43,12 @@ def backend_register(request):
             'message': 'duplicate username'
         }
         return JsonResponse(error_info, status=409)
+    if not User.check_password(register_info['password']):
+        error_info = {
+            'error_code': 400001,
+            'message': 'invailed password'
+        }
+        return JsonResponse(error_info, status=400)
     User.objects.create_user(**register_info)
     return JsonResponse({}, status=201)
 
@@ -69,7 +75,7 @@ def backend_profile(request):
     elif request_profile['method'] == 'edit':
         if 'password' in request_profile['new_profile'].keys():
             new_password = request_profile['new_profile']['password']
-            if request.user.check_password(new_password):
+            if User.check_password(new_password):
                 request.user.set_password(new_password)
             else:
                 error_info = {
