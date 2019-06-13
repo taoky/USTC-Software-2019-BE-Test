@@ -114,7 +114,7 @@ request.data = {
 
 可能的错误码与错误信息如下：
 - `409001 duplicate username`：用户名与已有用户重复
-- `400001 invailed password`：所希望设定的新密码不合法
+- `400001 invailed password: %s`：所希望设定的新密码不合法。`%s` 为 Django 放回的错误信息。
 
 #### Examples
 
@@ -150,7 +150,7 @@ request.data = {
 若 `request.POST['profile']` 中的 `method` 项为 `show`，则 `response.content` 中应有 `email`, `first_name`, `last_name` 三项，为用户信息
 
 若 `request.POST['profile']` 中的 `method` 项为 `edit`，则 `response.content` 中只可能含错误相关的信息。可能的错误码与错误信息如下：
-- `400001 invailed password`：所希望设定的新密码不合法
+- `400001 invailed password: %s`：所希望设定的新密码不合法。`%s` 为 Django 放回的错误信息。
 
 #### Examples
 

@@ -2,6 +2,8 @@ import json
 from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 
 def backend_login(request):
@@ -43,10 +45,12 @@ def backend_register(request):  # TODO: Password invailed
             'message': 'duplicate username'
         }
         return JsonResponse(error_info, status=409)
-    if not User.check_password(register_info['password']):
+    try:
+        validate_password(register_info['password'])
+    except ValidationError as error:
         error_info = {
             'error_code': 400001,
-            'message': 'invailed password'
+            'message': 'invailed password: %s' % error
         }
         return JsonResponse(error_info, status=400)
     User.objects.create_user(**register_info)
@@ -75,14 +79,15 @@ def backend_profile(request):
     elif request_profile['method'] == 'edit':
         if 'password' in request_profile['new_profile'].keys():
             new_password = request_profile['new_profile']['password']
-            if User.check_password(new_password):
-                request.user.set_password(new_password)
-            else:
+            try:
+                validate_password(new_password, user=request.user)
+            except ValidationError as error:
                 error_info = {
                     'error_code': 400001,
-                    'message': 'invailed password'
+                    'message': 'invailed password: %s' % error
                 }
                 return JsonResponse(error_info, status=400)
+            request.user.set_password(new_password)
         user_plain_editable_attr = ('email', 'first_name', 'last_name')
         for attr in user_plain_editable_attr:
             if attr in request_profile['new_profile'].keys():

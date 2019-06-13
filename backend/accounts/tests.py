@@ -8,7 +8,7 @@ class AuthTests(TestCase):
     _test_user_info = {
         'username': 'test',
         'email': 'test@test',
-        'password': 'testtest',
+        'password': 'testtest123654',
         'first_name': 'test_first',
         'last_name': 'test_last'
     }
@@ -77,3 +77,15 @@ class AuthTests(TestCase):
         test_profile = self._test_user_info.copy()
         test_profile.pop('password')
         self.assertEqual(json.loads(response.content), test_profile)
+
+    def test_register_with_invailed_password(self):
+        self.client = Client()
+        request = {
+            'register_info': json.dumps({
+                'username': 'test',
+                'password': 't'
+            })
+        }
+        response = self.client.post(reverse('accounts:register'), request)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(json.loads(response.content)['error_code'], 400001)
