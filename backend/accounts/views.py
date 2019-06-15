@@ -3,11 +3,13 @@ import re
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
-from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth.password_validation import (password_changed,
+                                                     validate_password)
 from django.core.exceptions import ValidationError
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.generic.base import View
+
 from .username_validation import validate_username
 
 User = get_user_model()
@@ -80,6 +82,40 @@ class RegisterView(View):
             'code': 200,
             'msg': ['Register successfully']
         })
+
+
+class ChangePasswordView(View):
+    http_method_names = ['post']
+
+    def post(self, request):
+        if not request.user.is_authenticated:
+            return JsonResponse({
+                'code': 401,
+                'msg': ['Please log in first']
+            })
+        old_password = request.POST.get('old_password')
+        new_password = request.POST.get('new_password')
+
+        try:
+            password_changed(new_password, request.user)
+        except ValidationError as e:
+            return JsonResponse({
+                'code': 420,
+                'msg': e.messages
+            })
+        user = authenticate(
+            request, username=request.user.username, password=old_password)
+        if user:
+            user.set_password(new_password)
+            return JsonResponse({
+                'code': 200,
+                'msg': ['Change password successfully']
+            })
+        else:
+            return JsonResponse({
+                'code': 400,
+                'msg': ['The old password is not correct']
+            })
 
 
 class ProfileView(View):
