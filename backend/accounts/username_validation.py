@@ -8,19 +8,22 @@ User = get_user_model()
 
 
 class ConflictUsernameValidator:
-    def validate(self, username):
+    @staticmethod
+    def validate(username):
         if User.objects.filter(username=username).exists():
             raise ValidationError('Username already exisis')
 
 
 class SpecialSymbolValidator:
-    def validate(self, username):
+    @staticmethod
+    def validate(username):
         if not re.search(u'^[_0-9a-zA-Z]+$', username):
             raise ValidationError('Username can not contain special symbol')
 
 
 class NoneTypeObjectValidator:
-    def validate(self, username):
+    @staticmethod
+    def validate(username):
         if (not username) or (username == ''):
             raise ValidationError('Please input the username')
 
