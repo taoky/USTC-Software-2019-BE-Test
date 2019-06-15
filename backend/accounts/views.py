@@ -30,7 +30,7 @@ def backend_logout(request):
     return JsonResponse({}, status=200)
 
 
-def backend_register(request):  # TODO: Password invailed
+def backend_register(request):
     """Use `username`, `password` and `email` in request.POST['register_info']
     to register"""
     register_info_all = json.loads(request.POST['register_info'])
