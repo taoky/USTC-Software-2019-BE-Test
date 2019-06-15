@@ -14,7 +14,6 @@ class AuthTests(TestCase):
     }
 
     def _test_register_and_login(self):
-        self.client = Client()
         request = {'register_info': json.dumps(self._test_user_info)}
         response = self.client.post(reverse('accounts:register'), request)
         self.assertEqual(response.status_code, 201)
@@ -29,26 +28,22 @@ class AuthTests(TestCase):
 
     def test_show_profile_then_edit_profile_then_show_profile(self):
         self._test_register_and_login()
-        request = {'profile': json.dumps({'method': 'show'})}
-        response = self.client.post(reverse('accounts:profile'), request)
+        response = self.client.post(reverse('accounts:profile_show'))
         self.assertEqual(response.status_code, 200)
         test_profile = self._test_user_info.copy()
         test_profile.pop('password')
-        self.assertEqual(json.loads(response.content), test_profile)
+        self.assertEqual(json.loads(json.loads(
+            response.content)['profile']), test_profile)
         request = {
-            'profile': json.dumps({
-                'method': 'edit',
-                'new_profile': {
-                    'first_name': 'first',
-                    'last_name': 'last',
-                    'email': 'testtest@test'
-                }
+            'new_profile': json.dumps({
+                'first_name': 'first',
+                'last_name': 'last',
+                'email': 'testtest@test'
             })
         }
-        response = self.client.post(reverse('accounts:profile'), request)
+        response = self.client.post(reverse('accounts:profile_edit'), request)
         self.assertEqual(response.status_code, 200)
-        request = {'profile': json.dumps({'method': 'show'})}
-        response = self.client.post(reverse('accounts:profile'), request)
+        response = self.client.post(reverse('accounts:profile_show'))
         self.assertEqual(response.status_code, 200)
         test_profile = {
             'username': 'test',
@@ -56,28 +51,26 @@ class AuthTests(TestCase):
             'last_name': 'last',
             'email': 'testtest@test'
         }
-        self.assertEqual(json.loads(response.content), test_profile)
+        self.assertEqual(json.loads(json.loads(
+            response.content)['profile']), test_profile)
 
     def test_edit_profile_with_invailed_password(self):
         """Excepted to fail"""
         self._test_register_and_login()
         request = {
-            'profile': json.dumps({
-                'method': 'edit',
-                'new_profile': {
-                    'password': 'new'
-                }
+            'new_profile': json.dumps({
+                'password': 'new'
             })
         }
-        response = self.client.post(reverse('accounts:profile'), request)
+        response = self.client.post(reverse('accounts:profile_edit'), request)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(json.loads(response.content)['error_code'], 400001)
-        request = {'profile': json.dumps({'method': 'show'})}
-        response = self.client.post(reverse('accounts:profile'), request)
+        response = self.client.post(reverse('accounts:profile_show'))
         self.assertEqual(response.status_code, 200)
         test_profile = self._test_user_info.copy()
         test_profile.pop('password')
-        self.assertEqual(json.loads(response.content), test_profile)
+        self.assertEqual(json.loads(json.loads(
+            response.content)['profile']), test_profile)
 
     def test_register_with_invailed_password(self):
         """Excepted to fail"""
@@ -92,7 +85,7 @@ class AuthTests(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(json.loads(response.content)['error_code'], 400001)
 
-    def test_register_with_too_long_username(self):
+    def test_register_with_invailed_username(self):
         """Excepted to succeed, for Django should call in-built function to
         convert the attribute to the proper value"""
         self.client = Client()
