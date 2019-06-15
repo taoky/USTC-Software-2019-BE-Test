@@ -175,17 +175,26 @@ class RegisterView(View):
 
 
 class ProfileView(View):
-    http_method_names = ['get']
+    http_method_names = ['get', 'post']
 
     def get(self, request):
-        pass
+        user = request.user
 
-
-class UpdateProfileView(View):
-    http_method_names = ['post']
+        return JsonResponse({
+            'code': 200,
+            'nickname': user.nickname,
+            'phone_number': user.phone_number
+        })
 
     def post(self, request):
-        pass
+        nickname = request.POST.get('nickname')
+        phone_number = request.POST.get('phone_number')
+
+        user = request.user
+
+        user.nickname = nickname or user.nickname
+        user.phone_number = phone_number or user.phone_number
+        user.save(update_fields=['nickname', 'phone_number'])
 
 
 class LogoutView(View):
