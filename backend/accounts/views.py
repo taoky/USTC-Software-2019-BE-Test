@@ -18,11 +18,10 @@ def backend_login(request):
         login(request, current_user)
         return JsonResponse({}, status=200)
     else:
-        error_info = {
+        return JsonResponse({
             'error_code': 401001,
             'message': 'username or password error'
-        }
-        return JsonResponse(error_info, status=401)
+        }, status=401)
 
 
 def backend_logout(request):
@@ -40,19 +39,17 @@ def backend_register(request):
         if attr in register_info_all.keys()
     }
     if User.objects.filter(username=register_info['username']).count():
-        error_info = {
+        return JsonResponse({
             'error_code': 409001,
             'message': 'duplicate username'
-        }
-        return JsonResponse(error_info, status=409)
+        }, status=409)
     try:
         validate_password(register_info['password'])
     except ValidationError as error:
-        error_info = {
+        return JsonResponse({
             'error_code': 400001,
             'message': 'invailed password: %s' % error
-        }
-        return JsonResponse(error_info, status=400)
+        }, status=400)
     User.objects.create_user(**register_info)
     return JsonResponse({}, status=201)
 
@@ -72,21 +69,19 @@ def backend_profile(request):
     request_profile = json.loads(request.POST['profile'])
     if request_profile['method'] == 'show':
         user_plain_attr = ('username', 'email', 'first_name', 'last_name')
-        user_info = {
+        return JsonResponse({
             attr: getattr(request.user, attr) for attr in user_plain_attr
-        }
-        return JsonResponse(user_info, status=200)
+        }, status=200)
     elif request_profile['method'] == 'edit':
         if 'password' in request_profile['new_profile'].keys():
             new_password = request_profile['new_profile']['password']
             try:
                 validate_password(new_password, user=request.user)
             except ValidationError as error:
-                error_info = {
+                return JsonResponse({
                     'error_code': 400001,
                     'message': 'invailed password: %s' % error
-                }
-                return JsonResponse(error_info, status=400)
+                }, status=400)
             request.user.set_password(new_password)
         user_plain_editable_attr = ('email', 'first_name', 'last_name')
         for attr in user_plain_editable_attr:
