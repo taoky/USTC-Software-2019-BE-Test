@@ -145,12 +145,12 @@ request.data = {
 
 若未登入，返回 401
 
-若 `request.POST['profile']` 中的 `method` 项既不为 `show` 也不为 `edit`，返回 204
+若 `request.POST['profile']` 中的 `method` 项既不为 `show` 也不为 `edit`，返回 404
 
 若 `request.POST['profile']` 中的 `method` 项为 `show`，则 `response.content` 中应有 `email`, `first_name`, `last_name` 三项，为用户信息
 
 若 `request.POST['profile']` 中的 `method` 项为 `edit`，则 `response.content` 中只可能含错误相关的信息。可能的错误码与错误信息如下：
-- `400001 invailed password: %s`：所希望设定的新密码不合法。`%s` 为 Django 放回的错误信息。
+- `400001 invailed password: %s`：所希望设定的新密码不合法。`%s` 为 Django 返回的错误信息。
 
 #### Examples
 

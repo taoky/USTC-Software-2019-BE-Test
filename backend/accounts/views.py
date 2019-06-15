@@ -91,4 +91,4 @@ def backend_profile(request):
         request.user.save()
         return JsonResponse({}, status=200)
     else:
-        return JsonResponse({}, status=204)
+        return JsonResponse({}, status=404)

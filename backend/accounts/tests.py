@@ -59,6 +59,7 @@ class AuthTests(TestCase):
         self.assertEqual(json.loads(response.content), test_profile)
 
     def test_edit_profile_with_invailed_password(self):
+        """Excepted to fail"""
         self._test_register_and_login()
         request = {
             'profile': json.dumps({
@@ -79,6 +80,7 @@ class AuthTests(TestCase):
         self.assertEqual(json.loads(response.content), test_profile)
 
     def test_register_with_invailed_password(self):
+        """Excepted to fail"""
         self.client = Client()
         request = {
             'register_info': json.dumps({
@@ -89,3 +91,24 @@ class AuthTests(TestCase):
         response = self.client.post(reverse('accounts:register'), request)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(json.loads(response.content)['error_code'], 400001)
+
+    def test_register_with_too_long_username(self):
+        """Excepted to succeed, for Django should call in-built function to
+        convert the attribute to the proper value"""
+        self.client = Client()
+        request = {
+            'register_info': json.dumps({
+                'username': 'a' * 10000,
+                'password': 'asqwrefd'
+            })
+        }
+        response = self.client.post(reverse('accounts:register'), request)
+        self.assertEqual(response.status_code, 201)
+        request = {
+            'login_info': json.dumps({
+                'username': 'a' * 10000,
+                'password': 'asqwrefd'
+            })
+        }
+        response = self.client.post(reverse('accounts:login'), request)
+        self.assertEqual(response.status_code, 200)
