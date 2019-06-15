@@ -32,8 +32,7 @@ class AuthTests(TestCase):
         self.assertEqual(response.status_code, 200)
         test_profile = self._test_user_info.copy()
         test_profile.pop('password')
-        self.assertEqual(json.loads(json.loads(
-            response.content)['profile']), test_profile)
+        self.assertEqual(json.loads(response.content)['profile'], test_profile)
         request = {
             'new_profile': json.dumps({
                 'first_name': 'first',
@@ -51,8 +50,7 @@ class AuthTests(TestCase):
             'last_name': 'last',
             'email': 'testtest@test'
         }
-        self.assertEqual(json.loads(json.loads(
-            response.content)['profile']), test_profile)
+        self.assertEqual(json.loads(response.content)['profile'], test_profile)
 
     def test_edit_profile_with_invailed_password(self):
         """Excepted to fail"""
@@ -69,8 +67,7 @@ class AuthTests(TestCase):
         self.assertEqual(response.status_code, 200)
         test_profile = self._test_user_info.copy()
         test_profile.pop('password')
-        self.assertEqual(json.loads(json.loads(
-            response.content)['profile']), test_profile)
+        self.assertEqual(json.loads(response.content)['profile'], test_profile)
 
     def test_register_with_invailed_password(self):
         """Excepted to fail"""

@@ -73,9 +73,9 @@ def backend_profile_show(request):
         return JsonResponse({}, status=401)
     user_plain_attr = ('username', 'email', 'first_name', 'last_name')
     return JsonResponse({
-        'profile': json.dumps({
+        'profile': {
             attr: getattr(request.user, attr) for attr in user_plain_attr
-        })
+        }
     }, status=200)
 
 
