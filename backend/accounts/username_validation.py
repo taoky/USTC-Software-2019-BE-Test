@@ -19,13 +19,21 @@ class SpecialSymbolValidator:
             raise ValidationError('Username can not contain special symbol')
 
 
+class NoneTypeObjectValidator:
+    def validate(self, username):
+        if (not username) or (username == ''):
+            raise ValidationError('Please input the username')
+
+
 username_validators = [
     ConflictUsernameValidator,
-    SpecialSymbolValidator
+    SpecialSymbolValidator,
+    NoneTypeObjectValidator
 ]
 
-username_validators_no_conflict_check = [
-    SpecialSymbolValidator
+username_validators_without_conflict_check = [
+    SpecialSymbolValidator,
+    NoneTypeObjectValidator
 ]
 
 
@@ -34,7 +42,7 @@ def validate_username(username, check_conflict):
     if check_conflict:
         validators = username_validators
     else:
-        validators = username_validators_no_conflict_check
+        validators = username_validators_without_conflict_check
     for validator in validators:
         try:
             validator.validate(username)
