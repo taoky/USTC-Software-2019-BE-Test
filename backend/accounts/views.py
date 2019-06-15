@@ -10,7 +10,8 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.generic.base import View
 
-from .username_validation import validate_username
+from backend.Mixin import LoginRequiredMixin
+from accounts.username_validation import validate_username
 
 User = get_user_model()
 
@@ -84,15 +85,10 @@ class RegisterView(View):
         })
 
 
-class ChangePasswordView(View):
+class ChangePasswordView(LoginRequiredMixin, View):
     http_method_names = ['post']
 
     def post(self, request):
-        if not request.user.is_authenticated:
-            return JsonResponse({
-                'code': 401,
-                'msg': ['Please log in first']
-            })
         old_password = request.POST.get('old_password')
         new_password = request.POST.get('new_password')
 
@@ -118,7 +114,7 @@ class ChangePasswordView(View):
             })
 
 
-class ProfileView(View):
+class ProfileView(LoginRequiredMixin, View):
     http_method_names = ['get', 'post']
 
     def get(self, request):
@@ -141,18 +137,12 @@ class ProfileView(View):
         user.save(update_fields=['nickname', 'phone_number'])
 
 
-class LogoutView(View):
+class LogoutView(LoginRequiredMixin, View):
     http_method_names = ['post']
 
     def post(self, request):
-        if request.user.is_authenticated:
-            auth_logout(request)
-            return JsonResponse({
-                'code': 200,
-                'msg': ['Log out successfully']
-            })
-        else:
-            return JsonResponse({
-                'code': 401,
-                'msg': ['Please log in first']
-            })
+        auth_logout(request)
+        return JsonResponse({
+            'code': 200,
+            'msg': ['Log out successfully']
+        })
