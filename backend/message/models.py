@@ -11,4 +11,4 @@ class Message(models.Model):
 
     @property
     def recieved_time(self):
-        return self.send_time + timezone.timedelta(seconds=self.hidden_time)
+        return self.sent_time + timezone.timedelta(seconds=self.hidden_seconds)

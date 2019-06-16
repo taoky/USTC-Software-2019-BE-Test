@@ -25,7 +25,7 @@ def message_send(request):
             'message': 'invailed message information:\
              %s' % error_info['message'][0]
         }, status=400)
-    new_message = Message(**message_info)
+    new_message = Message(**message_info, owner=request.user)
     new_message.save()
     return JsonResponse({}, status=201)
 
@@ -33,16 +33,17 @@ def message_send(request):
 @backend_login_required
 def message_recieve(request):
     messages = Message.objects.filter(
-        owner=request.user).order_by('-recieved_time')
+        owner=request.user).order_by('-sent_time')
     return JsonResponse({
         'messages': [
             {
                 'sent_time': message.sent_time.isoformat(),
                 'recieved_time': message.recieved_time.isoformat(),
-                'hidden_seconds': message.hidden_seconds
-            }.update({
-                'content': message.content
-            } if message.recieved_time < timezone.now else {})
+                'hidden_seconds': message.hidden_seconds,
+                **({
+                    'content': message.content
+                } if message.recieved_time < timezone.now() else {})
+            }
             for message in messages
         ]
     }, status=200)
