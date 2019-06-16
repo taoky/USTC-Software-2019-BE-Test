@@ -9,7 +9,6 @@ urlpatterns = [
     path('my', views.ShowMyMessageView.as_view(), name='my_message'),
     path('my/all', views.ShowMyAllMessageView.as_view(), name='my_all_message'),
     path('', views.ShowAllMessageView.as_view(), name='all_message'),
-    path('<uuid:uuid>/detail', views.MessageDetailView.as_view(),
+    path('<uuid:uuid>', views.MessageDetailView.as_view(),
          name='message_detail'),
-    path('<uuid:uuid>/edit', views.Edit.as_view(), name='edit_message'),
 ]

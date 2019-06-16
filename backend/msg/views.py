@@ -47,8 +47,34 @@ class CreateMessageView(LoginRequiredMixin, View):
         })
 
 
-class EditMessageView(LoginRequiredMixin, View):
-    def post(self, request, uuid):
+class MessageDetailView(View):
+    http_method_names = ['get', 'put', 'delete']
+
+    def get(self, request, uuid):
+        if not uuid:
+            return JsonResponse({
+                'code': 404,
+                'msg': ['Message not found']
+            })
+        try:
+            message = Message.objects.get(uuid=uuid)
+            if (not message.user == request.user) and (message.public == False):
+                return JsonResponse({
+                    'code': 403,
+                    'msg': ['Access denied']
+                })
+
+            return JsonResponse({
+                'code': 200,
+                'content': model_to_dict(message, fields=['user', 'content', 'create_time', 'edit_time', 'show_time', 'pubilc', 'uuid'])
+            })
+        except ObjectDoesNotExist as e:
+            return JsonResponse({
+                'code': 404,
+                'msg': ['Message not found']
+            })
+
+    def put(self, request, uuid):
         if not uuid:
             return JsonResponse({
                 'code': 404,
@@ -62,9 +88,10 @@ class EditMessageView(LoginRequiredMixin, View):
                     'code': 403,
                     'msg': ['Access denied']
                 })
-            delay_time = request.POST.get('delay_time', '0:0:0:0')
-            content = request.POST.get('content', message.content)
-            public = request.POST.get('public', message.public)
+
+            delay_time = request.PUT.get('delay_time', '0:0:0:0')
+            content = request.PUT.get('content', message.content)
+            public = request.PUT.get('public', message.public)
 
             days, hours, minutes, seconds = list(
                 map(int,
@@ -100,11 +127,7 @@ class EditMessageView(LoginRequiredMixin, View):
                 'msg': ['Message not found']
             })
 
-
-class MessageDetailView(View):
-    http_method_names = ['get']
-
-    def get(self, request, uuid):
+    def delete(self, request, uuid):
         if not uuid:
             return JsonResponse({
                 'code': 404,
@@ -112,15 +135,17 @@ class MessageDetailView(View):
             })
         try:
             message = Message.objects.get(uuid=uuid)
-            if (not message.user == request.user) and (message.public == False):
+
+            if (not message.user == request.user):
                 return JsonResponse({
                     'code': 403,
                     'msg': ['Access denied']
                 })
 
+            message.delete()
             return JsonResponse({
                 'code': 200,
-                'content': model_to_dict(message, fields=['user', 'content', 'create_time', 'edit_time', 'show_time', 'pubilc', 'uuid'])
+                'msg': ['Delete message successfully']
             })
         except ObjectDoesNotExist as e:
             return JsonResponse({
