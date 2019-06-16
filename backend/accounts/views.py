@@ -10,7 +10,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.generic.base import View
 
-from backend.Mixin import LoginRequiredMixin
+from accounts.Mixin import LoginRequiredMixin
 from accounts.username_validation import validate_username
 
 User = get_user_model()
@@ -135,6 +135,11 @@ class ProfileView(LoginRequiredMixin, View):
         user.nickname = nickname or user.nickname
         user.phone_number = phone_number or user.phone_number
         user.save(update_fields=['nickname', 'phone_number'])
+
+        return JsonResponse({
+            'code': 200,
+            'msg': ['Update profile successfully']
+        })
 
 
 class LogoutView(LoginRequiredMixin, View):

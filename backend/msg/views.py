@@ -4,7 +4,7 @@ import re
 from django.http import JsonResponse
 from django.utils import timezone
 from django.views.generic.base import View
-from django.core.exceptions import DoesNotExist
+from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import model_to_dict
 
 from msg.models import Message
@@ -93,7 +93,7 @@ class EditMessageView(LoginRequiredMixin, View):
                 'code': 200,
                 'msg': ['Edit successfully']
             })
-        except DoesNotExist as e:
+        except ObjectDoesNotExist as e:
             return JsonResponse({
                 'code': 404,
                 'msg': ['Message not found']
@@ -122,7 +122,7 @@ class MessageDetailView(View):
                 'code': 200,
                 'content': model_to_dict(message, fields=['user', 'content', 'edit_time', 'show_time', 'pubilc'])
             })
-        except DoesNotExist as e:
+        except ObjectDoesNotExist as e:
             return JsonResponse({
                 'code': 404,
                 'msg': ['Message not found']

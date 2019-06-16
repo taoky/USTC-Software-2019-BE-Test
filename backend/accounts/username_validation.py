@@ -11,7 +11,7 @@ class ConflictUsernameValidator:
     @staticmethod
     def validate(username):
         if User.objects.filter(username=username).exists():
-            raise ValidationError('Username already exisis')
+            raise ValidationError('Username already exists')
 
 
 class SpecialSymbolValidator:

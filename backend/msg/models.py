@@ -12,7 +12,7 @@ class Message(models.Model):
     edit_time = models.DateTimeField()
     show_time = models.DateTimeField()
     public = models.BooleanField()
-    uuid = models.UUIDField(unique=True, index=True)
+    uuid = models.UUIDField(unique=True)
 
     def is_showing(self):
         return self.show_time >= timezone.now()
