@@ -22,7 +22,7 @@ def backend_login(request):
         return JsonResponse({}, status=200)
     else:
         return JsonResponse({
-            'error_code': '401001',
+            'error_code': '401111',
             'message': 'username or password error'
         }, status=401)
 
@@ -46,7 +46,7 @@ def backend_register(request):
         request, 'POST', 'register_info', register_attr)
     if User.objects.filter(username=register_info['username']).count():
         return JsonResponse({
-            'error_code': '409001',
+            'error_code': '409111',
             'message': 'duplicate username'
         }, status=409)
     try:
