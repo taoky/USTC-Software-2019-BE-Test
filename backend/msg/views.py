@@ -63,8 +63,8 @@ class EditMessageView(LoginRequiredMixin, View):
                     'msg': ['Access denied']
                 })
             delay_time = request.POST.get('delay_time', '0:0:0:0')
-            content = request.POST.get('content', '')
-            public = request.POST.get('public', False)
+            content = request.POST.get('content', message.content)
+            public = request.POST.get('public', message.public)
 
             days, hours, minutes, seconds = list(
                 map(int,
@@ -86,9 +86,10 @@ class EditMessageView(LoginRequiredMixin, View):
             message.content = content
             message.edit_time = now
             message.show_time = now + delta_time
+            message.pubilc = public
 
-            message.save(update_fields=['content', 'edit_time', 'show_time'])
-
+            message.save(update_fields=['content',
+                                        'edit_time', 'show_time', 'public'])
             return JsonResponse({
                 'code': 200,
                 'msg': ['Edit successfully']
@@ -111,7 +112,7 @@ class MessageDetailView(View):
             })
         try:
             message = Message.objects.get(uuid=uuid)
-            if (not message.user == request.user) and (message.pubilc == False):
+            if (not message.user == request.user) and (message.public == False):
                 return JsonResponse({
                     'code': 403,
                     'msg': ['Access denied']

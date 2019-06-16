@@ -11,5 +11,5 @@ urlpatterns = [
     path('', views.ShowAllMessageView.as_view(), name='all_message'),
     path('<uuid:uuid>/detail', views.MessageDetailView.as_view(),
          name='message_detail'),
-    path('<uuid:uuid>/edit', views.MessageDetailView.as_view(), name='edit_message'),
+    path('<uuid:uuid>/edit', views.Edit.as_view(), name='edit_message'),
 ]
