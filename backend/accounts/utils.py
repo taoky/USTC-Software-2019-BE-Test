@@ -6,6 +6,11 @@ from django.http import JsonResponse
 
 
 class UserInfoClean():
+    """Limit user information forms
+
+    `ValidationError` is raised with a dict containing `error_code` and
+    `message` when some information is invailed
+    """
     def username_clean(self, username):
         if len(username) > 150:
             raise ValidationError({
@@ -65,6 +70,17 @@ class UserInfoClean():
 
 
 def get_info_from_request(request, method, info_name, attr_set):
+    """Only get some attributes from request
+
+    str `method`: HTTP method like 'POST' or 'GET'
+    str `info_name`: Will get attributes from `request.POST[info_name]` if
+    `method` is 'POST'
+    tuple `attr_set`: All needed attributes
+
+    Example: `get_info_from_request(request, 'POST', 'login_info', login_attr)`
+    will get all attributes in `login_attr` from `request.POST['login_info']`.
+    Then create a new dict and return it.
+    """
     info_all = json.loads(getattr(request, method)[info_name])
     return {
         attr: info_all[attr]
@@ -73,6 +89,10 @@ def get_info_from_request(request, method, info_name, attr_set):
 
 
 def backend_login_required(view):
+    """Make sure the user has logged in
+
+    `401` is returned if the user has not logged in
+    """
     def login_required_view(request, *args, **kwargs):
         if not request.user.is_authenticated:
             return JsonResponse({
