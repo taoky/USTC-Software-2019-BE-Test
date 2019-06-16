@@ -1,6 +1,5 @@
 import json
 from django.test import TestCase, Client
-from django.contrib.auth.models import User
 from django.urls import reverse
 
 
@@ -13,7 +12,8 @@ class AuthTests(TestCase):
         'last_name': 'test_last'
     }
 
-    def _test_register_and_login(self):
+    def test_register_then_login(self):
+        self.client = Client()
         request = {'register_info': json.dumps(self._test_user_info)}
         response = self.client.post(reverse('accounts:register'), request)
         self.assertEqual(response.status_code, 201)
@@ -22,12 +22,12 @@ class AuthTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_login_then_logout(self):
-        self._test_register_and_login()
+        self.test_register_then_login()
         response = self.client.get(reverse('accounts:logout'))
         self.assertEqual(response.status_code, 200)
 
-    def test_show_profile_then_edit_profile_then_show_profile(self):
-        self._test_register_and_login()
+    def test_show_profile_then_edit_then_logout_then_login_then_show(self):
+        self.test_register_then_login()
         response = self.client.post(reverse('accounts:profile_show'))
         self.assertEqual(response.status_code, 200)
         test_profile = self._test_user_info.copy()
@@ -37,10 +37,21 @@ class AuthTests(TestCase):
             'new_profile': json.dumps({
                 'first_name': 'first',
                 'last_name': 'last',
-                'email': 'testtest@test'
+                'email': 'testtest@test',
+                'password': 'asdinvweiuvnwpeo'
             })
         }
         response = self.client.post(reverse('accounts:profile_edit'), request)
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(reverse('accounts:logout'))
+        self.assertEqual(response.status_code, 200)
+        request = {
+            'login_info': json.dumps({
+                'username': 'test',
+                'password': 'asdinvweiuvnwpeo'
+            })
+        }
+        response = self.client.post(reverse('accounts:login'), request)
         self.assertEqual(response.status_code, 200)
         response = self.client.post(reverse('accounts:profile_show'))
         self.assertEqual(response.status_code, 200)
@@ -52,9 +63,9 @@ class AuthTests(TestCase):
         }
         self.assertEqual(json.loads(response.content)['profile'], test_profile)
 
-    def test_edit_profile_with_invailed_password(self):
+    def test_edit_profile_with_invailed_first_name(self):
         """Excepted to fail"""
-        self._test_register_and_login()
+        self.test_register_then_login()
         request = {
             'new_profile': json.dumps({
                 'first_name': 'new' * 100
@@ -93,3 +104,4 @@ class AuthTests(TestCase):
         }
         response = self.client.post(reverse('accounts:register'), request)
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(json.loads(response.content)['error_code'], '400111')
