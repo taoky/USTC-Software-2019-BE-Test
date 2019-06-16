@@ -103,6 +103,7 @@ class ChangePasswordView(LoginRequiredMixin, View):
             request, username=request.user.username, password=old_password)
         if user:
             user.set_password(new_password)
+            user.save()
             return JsonResponse({
                 'code': 200,
                 'msg': ['Change password successfully']
