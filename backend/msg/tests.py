@@ -235,8 +235,8 @@ class MsgModelTest(TestCase):
         new_msg_data['content'] = 'adasf34g34g34'
         new_msg_data['public'] = True
 
-        resp = c.post(reverse('msg:edit_message', args=(uuid,)),
-                      data=new_msg_data)
+        resp = c.put(reverse('msg:message_detail', args=(uuid,)),
+                     data=new_msg_data, content_type='application/json')
         body = json.loads(resp.content)
         self.assertEqual(body['code'], 200)
 
@@ -248,3 +248,34 @@ class MsgModelTest(TestCase):
         self.assertEqual(len(body['content']), 1)
 
         self.assertNotEqual(body['content'][0]['edit_time'], old_edit_time)
+        self.assertEqual(body['content'][0]['content'], 'adasf34g34g34')
+
+    def test_delete_message(self):
+        c = self.register_and_login()
+
+        msg_data = {
+            'content': '1234567890test@aa',
+            'public': False,
+            'delay_time': '0:0:0:0'
+        }
+        self.create_message(c, msg_data)
+
+        time.sleep(SLEEP_TIME)
+
+        resp = c.get(reverse('msg:my_message'), data=msg_data)
+        body = json.loads(resp.content)
+        self.assertEqual(body['code'], 200)
+        self.assertEqual(len(body['content']), 1)
+
+        uuid = body['content'][0]['uuid']
+
+        resp = c.delete(reverse('msg:message_detail', args=(uuid,)))
+        body = json.loads(resp.content)
+        self.assertEqual(body['code'], 200)
+
+        time.sleep(SLEEP_TIME)
+
+        resp = c.get(reverse('msg:my_message'), data=msg_data)
+        body = json.loads(resp.content)
+        self.assertEqual(body['code'], 200)
+        self.assertEqual(len(body['content']), 0)
