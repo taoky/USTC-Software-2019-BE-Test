@@ -1,15 +1,15 @@
 import datetime
 import re
+import uuid
 
+from django.core.exceptions import ObjectDoesNotExist
+from django.forms.models import model_to_dict
 from django.http import JsonResponse
 from django.utils import timezone
 from django.views.generic.base import View
-from django.core.exceptions import ObjectDoesNotExist
-from django.forms.models import model_to_dict
-
-from msg.models import Message
 
 from accounts.Mixin import LoginRequiredMixin
+from msg.models import Message
 
 
 class CreateMessageView(LoginRequiredMixin, View):
@@ -37,7 +37,7 @@ class CreateMessageView(LoginRequiredMixin, View):
         )
         now = timezone.now()
 
-        msg = Message(user=request.user, content=content,
+        msg = Message(user=request.user, content=content, uuid=uuid.uuid1(),
                       create_time=now, edit_time=now, show_time=now+delta_time, public=public)
         msg.save()
         return JsonResponse({
@@ -120,7 +120,7 @@ class MessageDetailView(View):
 
             return JsonResponse({
                 'code': 200,
-                'content': model_to_dict(message, fields=['user', 'content', 'edit_time', 'show_time', 'pubilc'])
+                'content': model_to_dict(message, fields=['user', 'content', 'edit_time', 'show_time', 'pubilc', 'uuid'])
             })
         except ObjectDoesNotExist as e:
             return JsonResponse({
@@ -130,7 +130,7 @@ class MessageDetailView(View):
 
 
 def create_json_ret(messages):
-    content = [model_to_dict(m, fields=['user', 'content', 'edit_time'])
+    content = [model_to_dict(m, fields=['user', 'content', 'edit_time', 'uuid'])
                for m in messages]
     return JsonResponse({
         'code': 200,
@@ -154,7 +154,7 @@ class ShowMyAllMessageView(LoginRequiredMixin, View):
     def get(self, request):
         messages = request.user.message_set.all()
 
-        content = [model_to_dict(m, fields=['user', 'content', 'edit_time', 'show_time'])
+        content = [model_to_dict(m, fields=['user', 'content', 'edit_time', 'show_time', 'uuid'])
                    for m in messages]
         return JsonResponse({
             'code': 200,
