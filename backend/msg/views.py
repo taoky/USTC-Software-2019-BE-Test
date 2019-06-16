@@ -3,13 +3,14 @@ import re
 import uuid
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.forms.models import model_to_dict
 from django.http import JsonResponse
 from django.utils import timezone
 from django.views.generic.base import View
 
 from accounts.Mixin import LoginRequiredMixin
 from msg.models import Message
+
+from .models import model_to_dict
 
 
 class CreateMessageView(LoginRequiredMixin, View):
@@ -143,7 +144,7 @@ class ShowMyMessageView(LoginRequiredMixin, View):
 
     def get(self, request):
         now = timezone.now()
-        messages = request.user.message_set.filter(show_time__gt=now)
+        messages = request.user.message_set.filter(show_time__lt=now)
 
         return create_json_ret(messages)
 
@@ -168,6 +169,6 @@ class ShowAllMessageView(View):
     def get(self, request):
         now = timezone.now()
         messages = request.user.message_set.filter(
-            show_time__gt=now).filter(public=True)
+            show_time__lt=now).filter(public=True)
 
         return create_json_ret(messages)
