@@ -69,18 +69,18 @@ class AuthTests(TestCase):
         test_profile.pop('password')
         self.assertEqual(json.loads(response.content)['profile'], test_profile)
 
-    # def test_register_with_invailed_password(self):
-    #     """Excepted to fail"""
-    #     self.client = Client()
-    #     request = {
-    #         'register_info': json.dumps({
-    #             'username': 'test',
-    #             'password': 't'
-    #         })
-    #     }
-    #     response = self.client.post(reverse('accounts:register'), request)
-    #     self.assertEqual(response.status_code, 400)
-    #     self.assertEqual(json.loads(response.content)['error_code'], 400001)
+    def test_register_with_invailed_password(self):
+        """Excepted to fail"""
+        self.client = Client()
+        request = {
+            'register_info': json.dumps({
+                'username': 'test',
+                'password': 't'
+            })
+        }
+        response = self.client.post(reverse('accounts:register'), request)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(json.loads(response.content)['error_code'], '400152')
 
     def test_register_with_invailed_username(self):
         """Excepted to fail"""

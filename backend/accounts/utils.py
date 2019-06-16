@@ -6,10 +6,10 @@ from django.http import JsonResponse
 
 
 class UserInfoClean():
-    """Limit user information forms
+    """Limit user information formats
 
     `ValidationError` is raised with a dict containing `error_code` and
-    `message` when some information is invailed
+    `message` when some information is invailed or does not exist when required
     """
     def username_clean(self, username):
         if len(username) > 150:
@@ -58,14 +58,34 @@ class UserInfoClean():
                 'message': 'email is invailed'
             })
 
+    def password_clean(self, password):
+        if len(password) > 128:
+            raise ValidationError({
+                'error_code': '151',
+                'message': 'too long password'
+            })
+        if len(password) < 8:
+            raise ValidationError({
+                'error_code': '152',
+                'message': 'too short password'
+            })
+
     def profile_edit_clean(self, user_info):
-        cleaned_attr = ('first_name', 'last_name', 'email')
+        cleaned_attr = ('first_name', 'last_name', 'email', 'password')
         for attr in cleaned_attr:
             if attr in user_info.keys():
                 getattr(self, attr + '_clean')(user_info[attr])
 
     def register_clean(self, user_info):
-        self.username_clean(user_info['username'])
+        force_cleaned_attr = ('username', 'password')
+        for attr in force_cleaned_attr:
+            try:
+                getattr(self, attr + '_clean')(user_info[attr])
+            except AttributeError:
+                return ValidationError({
+                    'error_code': '161',
+                    'message': 'except attribute: %s' % attr
+                })
         self.profile_edit_clean(user_info)
 
 
