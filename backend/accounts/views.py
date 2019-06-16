@@ -5,8 +5,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 
-from .utils import UserInfoClean
-from ..backend.utils import get_info_from_request, backend_login_required
+from accounts.utils import UserInfoClean
+from backend.utils import get_info_from_request, backend_login_required
 
 
 def backend_login(request):

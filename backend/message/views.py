@@ -1,37 +1,41 @@
 import json
 from django.http import JsonResponse
 from django.contrib.auth.models import User
+from django.utils import timezone
 
-from .models import Message
+from message.models import Message
+from backend.utils import backend_login_required, get_info_from_request
 
 
-# TODO: Classify error code with url
+@backend_login_required
 def message_send(request):
-    if request.user.is_authenticate:
-        return JsonResponse({}, status=401)
-    message_info_all = json.loads(request.POST['message_info'])
-    message_available_attr = ('hidden_time', 'content', 'reciever')
-    message_info = {
-        attr: message_info_all[attr] for attr in message_available_attr
-    }
-    try:
-        reciever = User.objects.get(username=message_info['reciever'])
-    except User.DoesNotexist:
-        return JsonResponse({
-            'error_code': 400002,
-            'message': 'reciever does not exist'
-        }, status=400)
+    message_attr = ('hidden_time', 'content', 'reciever')
+    message_info = get_info_from_request(
+        request, 'POST', 'message_info', message_attr)
+    # Message info clean
     if len(message_info['content']) > 255:
         return JsonResponse({
-            'error_code': 400003,
-            'message': 'content is too long'
+            'error_code': 400211,
+            'message': 'too long content'
         })
-    new_message = Message(**message_info,
-                          sender=request.user, reciever=reciever)
+    new_message = Message(**message_info)
     new_message.save()
     return JsonResponse({}, status=201)
 
 
+@backend_login_required
 def message_recieve(request):
-    if request.user.is_authenticate:
-        return JsonResponse({}, status=401)
+    messages = Message.objects.filter(
+        owner=request.user).order_by('-recieved_time')
+    return JsonResponse({
+        'messages': [
+            {
+                'sent_time': message.sent_time.isoformat(),
+                'recieved_time': message.recieved_time.isoformat(),
+                'hidden_seconds': message.hidden_seconds
+            }.update({
+                'content': message.content
+            } if message.recieved_time < timezone.now else {})
+            for message in messages
+        ]
+    }, status=200)
