@@ -48,8 +48,7 @@ class CreateMessageView(LoginRequiredMixin, View):
 
 
 class EditMessageView(LoginRequiredMixin, View):
-    def post(self, request):
-        uuid = self.kwargs.get('uuid')
+    def post(self, request, uuid):
         if not uuid:
             return JsonResponse({
                 'code': 404,
@@ -104,8 +103,7 @@ class EditMessageView(LoginRequiredMixin, View):
 class MessageDetailView(View):
     http_method_names = ['get']
 
-    def get(self, request):
-        uuid = self.kwargs.get('uuid')
+    def get(self, request, uuid):
         if not uuid:
             return JsonResponse({
                 'code': 404,
@@ -121,7 +119,7 @@ class MessageDetailView(View):
 
             return JsonResponse({
                 'code': 200,
-                'content': model_to_dict(message, fields=['user', 'content', 'edit_time', 'show_time', 'pubilc', 'uuid'])
+                'content': model_to_dict(message, fields=['user', 'content', 'create_time', 'edit_time', 'show_time', 'pubilc', 'uuid'])
             })
         except ObjectDoesNotExist as e:
             return JsonResponse({
