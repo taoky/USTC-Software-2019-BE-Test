@@ -57,48 +57,39 @@ class AuthTests(TestCase):
         self._test_register_and_login()
         request = {
             'new_profile': json.dumps({
-                'password': 'new'
+                'first_name': 'new' * 100
             })
         }
         response = self.client.post(reverse('accounts:profile_edit'), request)
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(json.loads(response.content)['error_code'], 400001)
+        self.assertEqual(json.loads(response.content)['error_code'], '400121')
         response = self.client.post(reverse('accounts:profile_show'))
         self.assertEqual(response.status_code, 200)
         test_profile = self._test_user_info.copy()
         test_profile.pop('password')
         self.assertEqual(json.loads(response.content)['profile'], test_profile)
 
-    def test_register_with_invailed_password(self):
+    # def test_register_with_invailed_password(self):
+    #     """Excepted to fail"""
+    #     self.client = Client()
+    #     request = {
+    #         'register_info': json.dumps({
+    #             'username': 'test',
+    #             'password': 't'
+    #         })
+    #     }
+    #     response = self.client.post(reverse('accounts:register'), request)
+    #     self.assertEqual(response.status_code, 400)
+    #     self.assertEqual(json.loads(response.content)['error_code'], 400001)
+
+    def test_register_with_invailed_username(self):
         """Excepted to fail"""
         self.client = Client()
         request = {
             'register_info': json.dumps({
-                'username': 'test',
-                'password': 't'
+                'username': 'a' * 10000,
+                'password': 'asqwrefd'
             })
         }
         response = self.client.post(reverse('accounts:register'), request)
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(json.loads(response.content)['error_code'], 400001)
-
-    def test_register_with_invailed_username(self):
-        """Excepted to succeed, for Django should call in-built function to
-        convert the attribute to the proper value"""
-        self.client = Client()
-        request = {
-            'register_info': json.dumps({
-                'username': 'a' * 10000,
-                'password': 'asqwrefd'
-            })
-        }
-        response = self.client.post(reverse('accounts:register'), request)
-        self.assertEqual(response.status_code, 201)
-        request = {
-            'login_info': json.dumps({
-                'username': 'a' * 10000,
-                'password': 'asqwrefd'
-            })
-        }
-        response = self.client.post(reverse('accounts:login'), request)
-        self.assertEqual(response.status_code, 200)

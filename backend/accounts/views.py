@@ -50,12 +50,14 @@ def backend_register(request):
             'message': 'duplicate username'
         }, status=409)
     try:
-        UserInfoClean.register_clean(register_info)
+        clean_tool = UserInfoClean()
+        clean_tool.register_clean(register_info)
     except ValidationError as error:
-        error_info = ValidationError.message
+        error_info = error.message_dict
         return JsonResponse({
-            'error_code': '400' + error_info['error_code'],
-            'message': 'invailed user information: %s' % error_info['message']
+            'error_code': '400' + error_info['error_code'][0],
+            'message': 'invailed user information:\
+             %s' % error_info['message'][0]
         }, status=400)
     User.objects.create_user(**register_info)
     return JsonResponse({}, status=201)
@@ -92,12 +94,14 @@ def backend_profile_edit(request):
         request.user.set_password(new_profile['password'])
         new_profile.pop('password')
     try:
-        UserInfoClean.profile_edit_clean(new_profile)
+        clean_tool = UserInfoClean()
+        clean_tool.profile_edit_clean(new_profile)
     except ValidationError as error:
-        error_info = ValidationError.message
+        error_info = error.message_dict
         return JsonResponse({
-            'error_code': '400' + error_info['error_code'],
-            'message': 'invailed user information: %s' % error_info['message']
+            'error_code': '400' + error_info['error_code'][0],
+            'message': 'invailed user information:\
+             %s' % error_info['message'][0]
         }, status=400)
     for attr, value in new_profile.items():
         setattr(request.user, attr, value)

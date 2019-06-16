@@ -51,7 +51,7 @@ class UserInfoClean():
                 'error_code': '141',
                 'message': 'too long email'
             })
-        pattern = r'[{1}]+@[{1}]+\.[{1}]+'.format('a-zA-Z0-9.-_')
+        pattern = r'[{0}]+@[{0}]+'.format('a-zA-Z0-9.-_')
         if not re.match(pattern, email):
             raise ValidationError({
                 'error_code': '142',
@@ -99,6 +99,6 @@ def backend_login_required(view):
                 'error_code': '401000',
                 'message': ''
             }, status=401)
-        view(request, *args, **kwargs)
+        return view(request, *args, **kwargs)
 
     return login_required_view
