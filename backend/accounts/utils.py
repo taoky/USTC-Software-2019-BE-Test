@@ -80,8 +80,8 @@ class UserInfoClean():
             try:
                 getattr(self, attr + '_clean')(user_info[attr])
             except AttributeError:
-                return ValidationError({
-                    'error_code': '161',
+                raise ValidationError({
+                    'error_code': '001',
                     'message': 'except attribute: %s' % attr
                 })
         self.profile_edit_clean(user_info)

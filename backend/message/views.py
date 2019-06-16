@@ -2,22 +2,29 @@ import json
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 from message.models import Message
 from backend.utils import backend_login_required, get_info_from_request
+from message.utils import MessageInfoClean
 
 
 @backend_login_required
 def message_send(request):
-    message_attr = ('hidden_time', 'content', 'reciever')
+    message_attr = ('hidden_seconds', 'content')
     message_info = get_info_from_request(
         request, 'POST', 'message_info', message_attr)
     # Message info clean
-    if len(message_info['content']) > 255:
+    clean_tool = MessageInfoClean()
+    try:
+        clean_tool.message_send_clean(message_info)
+    except ValidationError as error:
+        error_info = error.message_dict
         return JsonResponse({
-            'error_code': 400211,
-            'message': 'too long content'
-        })
+            'error_code': '400' + error_info['error_code'][0],
+            'message': 'invailed message information:\
+             %s' % error_info['message'][0]
+        }, status=400)
     new_message = Message(**message_info)
     new_message.save()
     return JsonResponse({}, status=201)
