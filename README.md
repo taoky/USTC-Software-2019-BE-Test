@@ -316,6 +316,8 @@
 | user      | str  | 作者           |
 | uuid      | str  | 当前消息的uuid |
 
+**返回的时间时UTC时间，格式为ISO标准时间格式，使用isoformat进行格式化**
+
 ## 显示我的所有消息
 
 ```
@@ -349,6 +351,8 @@
 | show_time | str  | 展示时间       |
 | user      | str  | 作者           |
 | uuid      | str  | 当前消息的uuid |
+
+**返回的时间时UTC时间，格式为ISO标准时间格式，使用isoformat进行格式化**
 
 ## 显示所有用户公开的消息
 
@@ -413,6 +417,8 @@
 | user        | str  | 作者           |
 | public      | bool | 是否公开       |
 | uuid        | str  | 这条消息的uuid |
+
+**返回的时间时UTC时间，格式为ISO标准时间格式，使用isoformat进行格式化**
 
 ### PUT
 

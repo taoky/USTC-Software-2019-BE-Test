@@ -13,13 +13,14 @@ def model_to_dict(model_instance, fields):
     由于Django自带的model_to_dict会将ForeignKey的id作为数据，而不是ForeignKey的展示字符串（__str__或者__repr__）
     故重写model_to_dict，单独特别处理user字段
     '''
+
+    ret = origin_model_to_dict(model_instance, fields)
     if 'user' in fields:
-        del fields[fields.index('user')]
-        ret = origin_model_to_dict(model_instance, fields)
-        ret.update({'user': model_instance.user.username})
-        return ret
-    else:
-        return origin_model_to_dict(model_instance, fields)
+        ret['user'] = model_instance.user.username
+    for field in fields:
+        if field.find('time') >= 0:
+            ret[field] = getattr(model_instance, field).isoformat()
+    return ret
 
 
 class Message(models.Model):
