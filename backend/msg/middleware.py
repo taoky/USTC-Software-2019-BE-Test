@@ -1,8 +1,8 @@
 import json
 
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponseBadRequest, JsonResponse
 from django.utils.deprecation import MiddlewareMixin
-from django.http import JsonResponse
+from django.utils.translation import gettext as _
 
 
 class JSONParsingMiddleware(MiddlewareMixin):
@@ -11,6 +11,7 @@ class JSONParsingMiddleware(MiddlewareMixin):
 
     Django中默认只将GET和POST请求中的数据进行json解析，存放到request.GET和request.POST中
     '''
+
     def process_request(self, request):
         if request.method == 'PUT':
             if request.content_type == 'application/json':
@@ -19,10 +20,10 @@ class JSONParsingMiddleware(MiddlewareMixin):
                 except ValueError as e:
                     return JsonResponse({
                         'code': 400,
-                        'msg': ['Can not parse the json', str(e)]
+                        'msg': [_('Can not parse the data to json'), str(e)]
                     })
             else:
                 return JsonResponse({
                     'code': 400,
-                    'msg': ['PUT method require content_type="application/json" in header']
+                    'msg': [_('PUT method require content_type="application/json" in header')]
                 })

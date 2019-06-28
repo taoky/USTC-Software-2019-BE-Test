@@ -3,6 +3,7 @@ import re
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext as _
 
 User = get_user_model()
 
@@ -14,7 +15,7 @@ class ConflictUsernameValidator:
     @staticmethod
     def validate(username):
         if User.objects.filter(username=username).exists():
-            raise ValidationError('Username already exists')
+            raise ValidationError(_('Username already exists'))
 
 
 class SpecialSymbolValidator:
@@ -24,7 +25,7 @@ class SpecialSymbolValidator:
     @staticmethod
     def validate(username):
         if not re.search(u'^[_0-9a-zA-Z]+$', username):
-            raise ValidationError('Username can not contain special symbol')
+            raise ValidationError(_('Username can not contain special symbol'))
 
 
 class NoneTypeObjectValidator:
@@ -34,7 +35,7 @@ class NoneTypeObjectValidator:
     @staticmethod
     def validate(username):
         if (not username) or (username == ''):
-            raise ValidationError('Please input the username')
+            raise ValidationError(_('Please input the username'))
 
 
 username_validators = [

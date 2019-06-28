@@ -49,6 +49,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'msg.middleware.JSONParsingMiddleware',
 ]
 
@@ -114,6 +115,15 @@ TIME_ZONE = 'Asia/Shanghai'
 USE_I18N = True
 
 USE_L10N = True
+
+LOCALE_PATHS = (
+    os.path.join(__file__, 'language'),
+)
+
+LANGUAGES = (
+    ('en', 'English'),
+    ('zh', '中文'),
+)
 
 USE_TZ = True
 

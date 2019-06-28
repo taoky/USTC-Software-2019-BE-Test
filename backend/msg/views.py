@@ -5,6 +5,7 @@ import uuid
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from django.views.generic.base import View
 
 from accounts.mixin import LoginRequiredMixin
@@ -58,7 +59,7 @@ class CreateMessageView(LoginRequiredMixin, View):
             # ValueError用于处理冒号之间的内容不是数字或者缺省的情况
             return JsonResponse({
                 'code': 410,
-                'msg': ['Incorrect delay_time format']
+                'msg': [_('Incorrect delay_time format')]
             })
 
         delta_time = datetime.timedelta(
@@ -74,7 +75,7 @@ class CreateMessageView(LoginRequiredMixin, View):
         msg.save()
         return JsonResponse({
             'code': 200,
-            'msg': ['Create message successfully']
+            'msg': [_('Create message successfully')]
         })
 
 
@@ -112,14 +113,14 @@ class MessageDetailView(LoginRequiredMixin, View):
         if not uuid:
             return JsonResponse({
                 'code': 404,
-                'msg': ['Message not found']
+                'msg': [_('Message not found')]
             })
         try:
             message = Message.objects.get(uuid=uuid)
             if (not message.user == request.user) and (message.public == False):
                 return JsonResponse({
                     'code': 403,
-                    'msg': ['Access denied']
+                    'msg': [_('Access denied')]
                 })
 
             return JsonResponse({
@@ -129,7 +130,7 @@ class MessageDetailView(LoginRequiredMixin, View):
         except ObjectDoesNotExist as e:
             return JsonResponse({
                 'code': 404,
-                'msg': ['Message not found']
+                'msg': [_('Message not found')]
             })
 
     def put(self, request, uuid):
@@ -164,7 +165,7 @@ class MessageDetailView(LoginRequiredMixin, View):
             if (not message.user == request.user):
                 return JsonResponse({
                     'code': 403,
-                    'msg': ['Access denied']
+                    'msg': [_('Access denied')]
                 })
 
             delay_time = request.PUT.get('delay_time', '0:0:0:0')
@@ -197,12 +198,12 @@ class MessageDetailView(LoginRequiredMixin, View):
                                         'edit_time', 'show_time', 'public'])
             return JsonResponse({
                 'code': 200,
-                'msg': ['Edit successfully']
+                'msg': [_('Edit message successfully')]
             })
         except ObjectDoesNotExist as e:
             return JsonResponse({
                 'code': 404,
-                'msg': ['Message not found']
+                'msg': [_('Message not found')]
             })
 
     def delete(self, request, uuid):
@@ -232,18 +233,18 @@ class MessageDetailView(LoginRequiredMixin, View):
             if (not message.user == request.user):
                 return JsonResponse({
                     'code': 403,
-                    'msg': ['Access denied']
+                    'msg': [_('Access denied')]
                 })
 
             message.delete()
             return JsonResponse({
                 'code': 200,
-                'msg': ['Delete message successfully']
+                'msg': [_('Delete message successfully')]
             })
         except ObjectDoesNotExist as e:
             return JsonResponse({
                 'code': 404,
-                'msg': ['Message not found']
+                'msg': [_('Message not found')]
             })
 
 

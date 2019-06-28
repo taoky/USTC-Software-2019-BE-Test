@@ -8,6 +8,7 @@ from django.contrib.auth.password_validation import (password_changed,
 from django.core.exceptions import ValidationError
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.utils.translation import gettext as _
 from django.views.generic.base import View
 
 from accounts.mixin import LoginRequiredMixin
@@ -65,12 +66,12 @@ class LoginView(View):
             auth_login(request, user)
             return JsonResponse({
                 'code': 200,
-                'msg': ['Log in successfully']
+                'msg': [_('Log in successfully')]
             })
         else:
             return JsonResponse({
                 'code': 400,
-                'msg': ['Username or password is not correct']
+                'msg': [_('Username or password is not correct')]
             })
 
 
@@ -128,7 +129,7 @@ class RegisterView(View):
         )
         return JsonResponse({
             'code': 200,
-            'msg': ['Register successfully']
+            'msg': [_('Register successfully')]
         })
 
 
@@ -176,12 +177,12 @@ class ChangePasswordView(LoginRequiredMixin, View):
             user.save()
             return JsonResponse({
                 'code': 200,
-                'msg': ['Change password successfully']
+                'msg': [_('Change password successfully')]
             })
         else:
             return JsonResponse({
                 'code': 400,
-                'msg': ['The old password is not correct']
+                'msg': [_('The old password is not correct')]
             })
 
 
@@ -238,7 +239,7 @@ class ProfileView(LoginRequiredMixin, View):
         if phone_number and not re.search('^[0-9-+]*$', phone_number):
             return JsonResponse({
                 'code': 400,
-                'msg': ['Invalid phone number']
+                'msg': [_('Invalid phone number')]
             })
 
         user = request.user
@@ -249,7 +250,7 @@ class ProfileView(LoginRequiredMixin, View):
 
         return JsonResponse({
             'code': 200,
-            'msg': ['Update profile successfully']
+            'msg': [_('Update profile successfully')]
         })
 
 
@@ -277,5 +278,5 @@ class LogoutView(LoginRequiredMixin, View):
         auth_logout(request)
         return JsonResponse({
             'code': 200,
-            'msg': ['Log out successfully']
+            'msg': [_('Log out successfully')]
         })
