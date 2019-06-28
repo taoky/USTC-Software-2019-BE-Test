@@ -29,23 +29,17 @@ class NoneTypeObjectValidator:
 
 
 username_validators = [
+    NoneTypeObjectValidator,
     ConflictUsernameValidator,
-    SpecialSymbolValidator,
-    NoneTypeObjectValidator
-]
-
-username_validators_without_conflict_check = [
-    SpecialSymbolValidator,
-    NoneTypeObjectValidator
+    SpecialSymbolValidator
 ]
 
 
 def validate_username(username, check_conflict):
     errors = []
-    if check_conflict:
-        validators = username_validators
-    else:
-        validators = username_validators_without_conflict_check
+    validators = username_validators.copy()
+    if not check_conflict:
+        validators.remove(ConflictUsernameValidator)
     for validator in validators:
         try:
             validator.validate(username)
