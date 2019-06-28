@@ -7,6 +7,12 @@ User = get_user_model()
 
 
 def model_to_dict(model_instance, fields):
+    '''
+    将model中的变量保存到字典中
+
+    由于Django自带的model_to_dict会将ForeignKey的id作为数据，而不是ForeignKey的展示字符串（__str__或者__repr__）
+    故重写model_to_dict，单独特别处理user字段
+    '''
     if 'user' in fields:
         del fields[fields.index('user')]
         ret = origin_model_to_dict(model_instance, fields)
