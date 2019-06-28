@@ -10,7 +10,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.generic.base import View
 
-from accounts.Mixin import LoginRequiredMixin
+from accounts.mixin import LoginRequiredMixin
 from accounts.username_validation import validate_username
 
 User = get_user_model()

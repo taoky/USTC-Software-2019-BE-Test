@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from django.utils import timezone
 from django.views.generic.base import View
 
-from accounts.Mixin import LoginRequiredMixin
+from accounts.mixin import LoginRequiredMixin
 from msg.models import Message
 
 from .models import model_to_dict
@@ -47,8 +47,9 @@ class CreateMessageView(LoginRequiredMixin, View):
         })
 
 
-class MessageDetailView(View):
+class MessageDetailView(LoginRequiredMixin, View):
     http_method_names = ['get', 'put', 'delete']
+    login_required_method = ['delete', 'put']
 
     def get(self, request, uuid):
         if not uuid:
