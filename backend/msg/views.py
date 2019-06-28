@@ -19,16 +19,22 @@ class CreateMessageView(LoginRequiredMixin, View):
     def post(self, request):
         delay_time = request.POST.get('delay_time', '0:0:0:0')
         content = request.POST.get('content', '')
-        public = request.POST.get('public', False)
+        public = request.POST.get('public', False) in (True, 'True')
 
-        days, hours, minutes, seconds = list(
-            map(int,
-                map(lambda x: x or 0,
-                    re.findall(
-                        '([0-9]+):([0-9]+):([0-9]+):([0-9]+)', delay_time)[0]
+        try:
+            days, hours, minutes, seconds = list(
+                map(int,
+                    map(lambda x: x or 0,
+                        re.findall(
+                            '([0-9]+):([0-9]+):([0-9]+):([0-9]+)', delay_time)[0]
+                        )
                     )
-                )
-        )
+            )
+        except (IndexError, ValueError):
+            return JsonResponse({
+                'code': 410,
+                'msg': ['Incorrect delay_time format']
+            })
 
         delta_time = datetime.timedelta(
             days=days,
@@ -169,7 +175,8 @@ class ShowMyMessageView(LoginRequiredMixin, View):
 
     def get(self, request):
         now = timezone.now()
-        messages = request.user.message_set.filter(show_time__lt=now)
+        messages = request.user.message_set.filter(
+            show_time__lt=now).order_by('-show_time')
 
         return create_json_ret(messages)
 
@@ -178,7 +185,7 @@ class ShowMyAllMessageView(LoginRequiredMixin, View):
     http_method_names = ['get']
 
     def get(self, request):
-        messages = request.user.message_set.all()
+        messages = request.user.message_set.all().order_by('-show_time')
 
         content = [model_to_dict(m, fields=['user', 'content', 'edit_time', 'show_time', 'uuid'])
                    for m in messages]
@@ -194,6 +201,5 @@ class ShowAllMessageView(View):
     def get(self, request):
         now = timezone.now()
         messages = request.user.message_set.filter(
-            show_time__lt=now).filter(public=True)
-
+            show_time__lt=now).filter(public=True).order_by('-show_time')
         return create_json_ret(messages)
