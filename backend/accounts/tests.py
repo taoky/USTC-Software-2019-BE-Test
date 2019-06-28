@@ -145,6 +145,33 @@ class AccountsModelTest(TestCase):
         self.assertEqual(body['nickname'], 'Elsa')
         self.assertEqual(body['phone_number'], '12345678')
 
+    def test_update_profile_invalid_phone_number(self):
+        c = Client()
+
+        user_info = {
+            'username': 'abcd',
+            'password': '12345678abcd'
+        }
+        self.register_and_login(c, user_info)
+
+        new_profile = {
+            'nickname': 'Elsa',
+            'phone_number': '+86-0123-12345678'
+        }
+        resp = c.post(reverse('accounts:profile'), data=new_profile)
+        body = json.loads(resp.content)
+
+        self.assertEqual(body['code'], 200)
+
+        new_profile = {
+            'nickname': 'Elsa',
+            'phone_number': '+86-0123-a12345678'
+        }
+        resp = c.post(reverse('accounts:profile'), data=new_profile)
+        body = json.loads(resp.content)
+
+        self.assertEqual(body['code'], 400)
+
     def test_get_profile_without_login(self):
         c = Client()
 

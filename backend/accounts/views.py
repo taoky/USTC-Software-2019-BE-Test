@@ -131,6 +131,12 @@ class ProfileView(LoginRequiredMixin, View):
         nickname = request.POST.get('nickname')
         phone_number = request.POST.get('phone_number')
 
+        if phone_number and not re.search('^[0-9-+]*$',phone_number):
+            return JsonResponse({
+                'code': 400,
+                'msg': ['Invalid phone number']
+            })
+
         user = request.user
 
         user.nickname = nickname or user.nickname
