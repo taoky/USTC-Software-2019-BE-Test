@@ -167,7 +167,28 @@ class MsgModelTest(TestCase):
         body = json.loads(resp.content)
         self.assertEqual(body['code'], 404)
 
-    def test_no_public_message_wrong_user(self):
+    def test_create_msg_wrong_format(self):
+        c = self.register_and_login()
+
+        msg_data = {
+            'content': '1234567890test@aa',
+            'public': False,
+            'delay_time': '0:0:0'  # lack of ":"
+        }
+        resp = c.post(reverse('msg:create_message'), data=msg_data)
+        body = json.loads(resp.content)
+        self.assertEqual(body['code'], 410)
+
+        msg_data = {
+            'content': '1234567890test@aa',
+            'public': False,
+            'delay_time': ':a:&:'  # non-num
+        }
+        resp = c.post(reverse('msg:create_message'), data=msg_data)
+        body = json.loads(resp.content)
+        self.assertEqual(body['code'], 410)
+
+    def test_not_public_message_wrong_user(self):
         c = self.register_and_login()
 
         msg_data = {
