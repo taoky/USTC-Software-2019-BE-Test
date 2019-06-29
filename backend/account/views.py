@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib import auth
@@ -15,7 +15,7 @@ def regist(request):
             password = request.POST['password']
             #Using User method to create a new account
             user = User.objects.create_user(username=username, password=password)
-            return JsonResponse({"err_code":"000", "err_msg":"Registration successful!"})
+            return JsonResponse({"err_code":"000", "err_msg":"Registration is successful!"})
         else:
             errors = list(form.errors.values())
             err = list(errors[0])[0].split(',')
@@ -41,13 +41,16 @@ def login(request):
                 user = auth.authenticate(username=username, password=password)
                 if user is not None:
                     auth.login(request, user)
-                    return JsonResponse({"err_code":"100", "err_msg":"Login successful!"})
+                    return JsonResponse({"err_code":"100", "err_msg":"Login successfully!"})
                 else:
                     return JsonResponse({"err_code":"103", "err_msg":"Wrong password!"})
     else:
         return JsonResponse({"err_code":"4.3", "err_msg":"Please use 'POST' method."})
 
 def logout(request):
+    #for user in User.objects.all():
+        #user.delete()
+        #This is for delete data in the list
     if request.method == 'POST':
         username = request.POST['username']
         user = User.objects.filter(username=username)
@@ -58,6 +61,6 @@ def logout(request):
             if request.user.is_authenticated:
                 #Check the status of the current username, only the user that already logged in can logout.
                 auth.logout(request)
-                return HttpResponse("HAHAHA")
+                return JsonResponse({"err_code":"200", "err_msg":"Logout successfully!"})
             else:
                 return JsonResponse({"err_code":"202", "err_msg":"You have to login."})
