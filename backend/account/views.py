@@ -2,41 +2,62 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib import auth
-from .forms import RegistrationForm, LoginForm
+from .forms import RegistrationForm
 
 def regist(request):
+    """
+        All the information about registration format is in the forms.py file.
+    """
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
             username = request.POST['username']
-            password = request.POST['password_re']
+            password = request.POST['password']
             #Using User method to create a new account
             user = User.objects.create_user(username=username, password=password)
-            return HttpResponse("Registration successful!")
+            return JsonResponse({"err_code":"000", "err_msg":"Registration successful!"})
         else:
-            errors = form.errors
-            return JsonResponse({"err_msg":errors})
+            errors = list(form.errors.values())
+            err = list(errors[0])[0].split(',')
+            #Using list to change ErrorList object into list object
+            return JsonResponse({"err_code":err[0], "err_msg":err[1]})
     else:
-        return HttpResponse("Please use 'POST' method!")
+        return JsonResponse({"err_code":"4.3", "err_msg":"Please use 'POST' method."})
 
 def login(request):
     if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            username = request.POST['username']
-            password = request.POST['password']
-            #Using auth mod to check
-            user = auth.authenticate(username=username, password=password)
-            if user is not None and user.is_active:
-                auth.login(request, user)
-                return HttpResponse("Login successfully.")
-            else:
-                return HttpResponse("Wrong password!")
+        username = request.POST['username']
+        password = request.POST['password']
+        #Check the existence of the username
+        user = User.objects.filter(username=username)
+        if not user:
+            return JsonResponse({"err_code":"101", "err_msg":"Your username does not exist!"})
         else:
-            errors = form.errors
-            return JsonResponse({"err_msg":errors})
+            if request.user.is_authenticated:
+                #Check the status of the current username, the user that already logged in can't do this again.
+                return JsonResponse({"err_code":"102", "err_msg":"You have already logged in!"})
+            else:
+                #Using auth mod to check
+                user = auth.authenticate(username=username, password=password)
+                if user is not None:
+                    auth.login(request, user)
+                    return JsonResponse({"err_code":"100", "err_msg":"Login successful!"})
+                else:
+                    return JsonResponse({"err_code":"103", "err_msg":"Wrong password!"})
+    else:
+        return JsonResponse({"err_code":"4.3", "err_msg":"Please use 'POST' method."})
 
-
-
-
-
+def logout(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        user = User.objects.filter(username=username)
+        if not user:
+            return JsonResponse({"err_code":"201", "err_msg":"Your username does not exist!"})
+            #This may not happen in practice.
+        else:
+            if request.user.is_authenticated:
+                #Check the status of the current username, only the user that already logged in can logout.
+                auth.logout(request)
+                return HttpResponse("HAHAHA")
+            else:
+                return JsonResponse({"err_code":"202", "err_msg":"You have to login."})
