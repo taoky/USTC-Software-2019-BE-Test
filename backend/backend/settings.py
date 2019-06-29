@@ -100,6 +100,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Expand User model to create profile
+
+AUTH_USER_MODEL = 'account.User_Info'
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/

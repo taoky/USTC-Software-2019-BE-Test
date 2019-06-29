@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.models import User
+from .models import User_Info
 
 #Learning this method from CSDN
 
@@ -10,6 +10,7 @@ class RegistrationForm(forms.Form):
     username = forms.CharField(label='', max_length=100)
     password = forms.CharField(label='', widget=forms.PasswordInput)
     password_re = forms.CharField(label='', widget=forms.PasswordInput)
+    profile = forms.CharField(label='', max_length=100, required=False)
 
     #Use clean methods to restrict input values
 
@@ -24,7 +25,7 @@ class RegistrationForm(forms.Form):
             raise forms.ValidationError("002,Your username must be shorter than 20 words.")
         else:
             #To check whether the username already exists
-            checkresult = User.objects.filter(username=username)
+            checkresult = User_Info.objects.filter(username=username)
             if len(checkresult) > 0:
                 raise forms.ValidationError("003,Your username already exists.")
         return username
@@ -55,4 +56,13 @@ class RegistrationForm(forms.Form):
             raise forms.ValidationError("013,Two passwords mismatch. Please try again.")
         else:
             return password_re
+
+    def clean_profile(self):
+        profile = self.cleaned_data.get('profile')
+        if profile == None:
+            profile = ''
+        if len(profile) > 70:
+            raise forms.ValidationError("021,Your profile must be shorter than 70 words")
+        else:
+            return profile
 
