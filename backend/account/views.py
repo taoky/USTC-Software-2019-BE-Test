@@ -19,13 +19,17 @@ def regist(request):
                 profile = request.POST['profile']
             except:
                 return JsonResponse({"err_code":"008", "err_msg":"You must add profile into request."})
+            
             #Using User method to create a new account
+            
             user = User_Info.objects.create_user(username=username, password=password, profile=profile)
             return JsonResponse({"err_code":"000", "err_msg":"Registration is successful!"})
         else:
             errors = list(form.errors.values())
             err = list(errors[0])[0].split(',')
+            
             #Using list to change ErrorList object into list object
+            
             return JsonResponse({"err_code":err[0], "err_msg":err[1]})
     else:
         return JsonResponse({"err_code":"4.3", "err_msg":"Please use 'POST' method."})
@@ -37,16 +41,22 @@ def login(request):
             password = request.POST['password']
         except:
             return JsonResponse({"err_code":"104", "err_msg":"You must add username and password into request."})
+        
         #Check the existence of the username
+        
         user = User_Info.objects.filter(username=username)
         if not user:
             return JsonResponse({"err_code":"101", "err_msg":"Your username does not exist!"})
         else:
             if request.user.is_authenticated:
+                
                 #Check the status of the current username, the user that already logged in can't do this again.
+                
                 return JsonResponse({"err_code":"102", "err_msg":"You have already logged in!"})
             else:
+                
                 #Using auth mod to check
+                
                 user = auth.authenticate(username=username, password=password)
                 if user is not None:
                     auth.login(request, user)
@@ -57,9 +67,6 @@ def login(request):
         return JsonResponse({"err_code":"4.3", "err_msg":"Please use 'POST' method."})
 
 def logout(request):
-    #for user in User_Info.objects.all():
-        #user.delete()
-        #This is for delete data in the list
     if request.method == 'POST':
         try:
             username = request.POST['username']
@@ -68,10 +75,14 @@ def logout(request):
         user = User_Info.objects.filter(username=username)
         if not user:
             return JsonResponse({"err_code":"201", "err_msg":"Your username does not exist!"})
+            
             #This may not happen in practice.
+        
         else:
             if request.user.is_authenticated:
+                
                 #Check the status of the current username, only the user that already logged in can logout.
+                
                 auth.logout(request)
                 return JsonResponse({"err_code":"200", "err_msg":"Logout successfully!"})
             else:
@@ -88,10 +99,14 @@ def profile_show(request):
         user = User_Info.objects.filter(username=username)
         if not user:
             return JsonResponse({"err_code":"301", "err_msg":"Your username does not exist!"})
+            
             #This may not happen in practice.
+        
         else:
             if request.user.is_authenticated:
+                
                 #Check the status of the current username, only the user that already logged in can see the profile.
+                
                 user_in = User_Info.objects.get(username=username)
                 profile_info = user_in.profile
                 if len(profile_info) == 0:
@@ -114,12 +129,16 @@ def profile_update(request):
             return JsonResponse({"err_code":"401", "err_msg":"Your username does not exist!"})
         else:
             if request.user.is_authenticated:
+                
                 #Check the status of the current username, only the user that already logged in can edit the profile.
+                
                 try:
                     profile_new = request.POST['profile']
                 except:
                     return JsonResponse({"err_code":"404", "err_msg":"you must add profile into request."})
+                
                 #On this situation the profile in the POST means the changed profile.
+                
                 User_Info.objects.filter(username=username).update(profile=profile_new)
                 return JsonResponse({"err_code":"400", "err_msg":"Profile updated successful."})
             else:
@@ -146,13 +165,18 @@ def message_create(request):
             show_time = release_time + datetime.timedelta(minutes=int(wait_time_str))
             show_time_str = show_time.strftime("%Y-%m-%d-%H-%M-%S")
             message_new = User_Info.objects.create_user(username=message_id_str, release_time=release_time_str, message=message, wait_time=wait_time_str, show_time=show_time_str)
+            
             #Using User method to create a new account.
+            
             #Cause it requires a username, so just use the message_id to represent it.
+            
             return JsonResponse({"err_code":"500", "err_msg":"Message create successfully!"})
         else:
             errors = list(form.errors.values())
             err = list(errors[0])[0].split(',')
+            
             #Using list to change ErrorList object into list object
+            
             return JsonResponse({"err_code":err[0], "err_msg":err[1]})
     else:
         return JsonResponse({"err_code":"4.3", "err_msg":"Please use 'POST' method."})
@@ -184,7 +208,6 @@ def message_show(request):
                     continue
             for msg in msg_to_show:
                 msg_all = msg_all + msg
-            #return HttpResponse(msg_all)
             return JsonResponse({"err_code":"600", "err_msg":msg_all})
     else:
         return JsonResponse({"err_code":"4.3", "err_msg":"Please use 'POST' method."})
@@ -203,3 +226,11 @@ def message_delete(request):
             return JsonResponse({"err_code":"700", "err_msg":"This message deletes successfully!"})
     else:
         return JsonResponse({"err_code":"4.3", "err_msg":"Please use 'POST' method."})
+
+def delete_all(request):
+    """
+        Delete all the information in the database to start a new test or something.
+    """
+    for item in User_Info.objects.all():
+        item.delete()
+    return JsonResponse({"err_code":"800", "err_msg":"Delete successfully."})
