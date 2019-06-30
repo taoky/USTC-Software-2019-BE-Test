@@ -125,7 +125,7 @@ class MessageDetailView(LoginRequiredMixin, View):
 
             return JsonResponse({
                 'code': 200,
-                'content': model_to_dict(message, fields=['user', 'content', 'create_time', 'edit_time', 'show_time', 'pubilc', 'uuid'])
+                'msg': model_to_dict(message, fields=['user', 'content', 'create_time', 'edit_time', 'show_time', 'pubilc', 'uuid'])
             })
         except ObjectDoesNotExist as e:
             return JsonResponse({
@@ -157,7 +157,7 @@ class MessageDetailView(LoginRequiredMixin, View):
         if not uuid:
             return JsonResponse({
                 'code': 404,
-                'msg': ['Message not found']
+                'msg': [_('Message not found')]
             })
         try:
             message = Message.objects.get(uuid=uuid)
@@ -225,7 +225,7 @@ class MessageDetailView(LoginRequiredMixin, View):
         if not uuid:
             return JsonResponse({
                 'code': 404,
-                'msg': ['Message not found']
+                'msg': [_('Message not found')]
             })
         try:
             message = Message.objects.get(uuid=uuid)
@@ -257,14 +257,14 @@ def create_json_ret(messages):
 
     @return in JsonResponse
         code<int>:  返回代码，恒为200
-        content<list>:  所有消息组成的list，每个元素代表一条消息，按照时间降序排列
+        msg<list>:  所有消息组成的list，每个元素代表一条消息，按照时间降序排列
                         其中包含```user```，```content```，```edit_time```，```uuid```字段
     '''
     content = [model_to_dict(m, fields=['user', 'content', 'edit_time', 'uuid'])
                for m in messages]
     return JsonResponse({
         'code': 200,
-        'content': content
+        'msg': content
     })
 
 
@@ -287,8 +287,9 @@ class ShowMyMessageView(LoginRequiredMixin, View):
                        | ------ | -------- |
                        | 200    | 获取成功 |
                        | 401    | 未登录   |
-            content<list>:  所有消息组成的list，每个元素代表一条消息，按照时间降序排列
+            msg<list>:  如果返回200，则msg为所有消息组成的list，每个元素代表一条消息，按照时间降序排列
                             其中包含```user```，```content```，```edit_time```，```uuid```字段
+                        如果返回401，则代表返回的错误原因
         '''
         now = timezone.now()
         messages = request.user.message_set.filter(
@@ -316,8 +317,9 @@ class ShowMyAllMessageView(LoginRequiredMixin, View):
                        | ------ | -------- |
                        | 200    | 获取成功 |
                        | 401    | 未登录   |
-            content<list>:  所有消息组成的list，每个元素代表一条消息，按照时间降序排列
+            msg<list>:  如果返回200，则msg为所有消息组成的list，每个元素代表一条消息，按照时间降序排列
                             其中包含```user```，```content```，```edit_time```，```show_time```，```uuid```字段
+                        如果返回401，则代表返回的错误原因
         '''
         messages = request.user.message_set.all().order_by('-show_time')
 
@@ -325,7 +327,7 @@ class ShowMyAllMessageView(LoginRequiredMixin, View):
                    for m in messages]
         return JsonResponse({
             'code': 200,
-            'content': content
+            'msg': content
         })
 
 
@@ -347,8 +349,9 @@ class ShowAllMessageView(View):
                        | ------ | -------- |
                        | 200    | 获取成功 |
                        | 401    | 未登录   |
-            content<list>:  所有消息组成的list，每个元素代表一条消息，按照时间降序排列
+            msg<list>:  如果返回200，则msg为所有消息组成的list，每个元素代表一条消息，按照时间降序排列
                             其中包含```user```，```content```，```edit_time```，```uuid```字段
+                        如果返回401，则代表返回的错误原因
         '''
         now = timezone.now()
         messages = request.user.message_set.filter(
