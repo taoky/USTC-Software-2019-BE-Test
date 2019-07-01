@@ -1,0 +1,84 @@
+1.该框架含有一个app，app名称为account
+2.app有两个主要功能：
+  (1).注册、登录、登出一个用户，注册同时编辑用户的profile，显示、更新用户的profile
+  (2).创建、显示、删除一个message
+3.urls：
+  regist/ 注册用户
+  login/ 登录用户
+  logout/ 登出用户
+  profile_show/ 显示资料
+  profile_update/ 更新资料
+  message_create/ 创建消息
+  message_show/ 显示消息
+  message_delete/ 删除消息
+  delete_all/ 删除所有数据库内容
+4.包含内容：
+  (1).用户部分，request中包含有：
+    username
+    password
+    password_re(仅在regist时使用，用于验证两次密码是否一致)
+    profile
+  (2).message部分，request中包含有：
+    username(作为message_id使用)
+    message
+    wait_time(一个非负整数，表示等待分钟数)
+5.注意事项：
+  (1).这里用户和message共享一个数据库，所以我要求了注册用户名时，用户名必须大于3个字节，而创建message时，message不能多于99个，这样两者的username不会冲突(因为message_id我也用的username表示)
+  (2).User模块被继承为了User_Info，增加了profile，message，release_time(message创建时间)，wait_time，show_time(message可以显示的时间)
+  (3).forms.py中存放有用户注册和创建message的一些规则
+  (4).时区为亚洲/上海，USE_TZ=False
+  (5).所有内容通过postman测试(谢谢滑滑蛋的救命之恩)
+  (6).所有Response全都强迫成为了JsonResponse
+6.错误码：
+  (1).regist
+    000：注册成功
+    001：用户名必须大于3字节
+    002：用户名必须小于20字节
+    003：用户名已存在
+    004：密码必须大于6字节
+    005：密码必须包含数字
+    006：两次输入密码不一致
+    007：profile必须在70字节以内
+    008：request中没有必要信息
+  (2).login
+    100：登陆成功
+    101：用户名不存在
+    102：已经登录
+    103：密码错误
+    104：request中没有必要信息
+  (3).logout
+    200：登出成功
+    201：用户名不存在
+    202：登录才能登出
+    203：request中没有必要信息
+  (4).profile_show
+    300：profile显示成功
+    301：用户名不存在
+    302：登录才能显示profile
+    303：request中没有必要信息
+  (5).profile_update
+    400：profile更新成功
+    401：用户名不存在
+    402：登录才能更新profile
+    403：request中没有必要信息(username)
+    404：request中没有必要信息(profile)
+  (6).message_create
+    500：message创建成功
+    501：request中的等待时间不能识别为数字
+    502：等待时间必须是一个非负整数(minutes)
+    503：request中的message编号不能识别为数字
+    504：message编号必须是一个非负整数
+    505：message编号已经存在
+    506：message必须少于100条，需要删除一些消息
+    507：request中没有必要信息
+  (7).message_show
+    600：message显示成功
+    601：没有任何可显示的message
+  (8).message_delete
+    700：message删除成功
+    701：message不存在
+    702：request中没有必要信息
+  (9).delete_all
+    800：数据库内容删除成功
+  (10).彩蛋???
+    4.3：request类型不是POST
