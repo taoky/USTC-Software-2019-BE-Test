@@ -59,63 +59,35 @@
 
 ## 报告（需要完成）
 
-1、注册页面
-简要描述： 
-•	用户注册接口
-请求URL： 
-•	` http://localhost:8000/account/register/
-请求方式：
-•	POST GET
-参数： 
-表单	参数名	必选	类型	说明
-form	username	是	string	用户名
-form	password	是	string	密码
-form	password2	是	string	确认密码
-form	email	是	string	邮件
-proform	phone	否	string	电话
-proform	company	否	string	工作单位
-proform	selfpro	否	text	个人简介
-返回参数说明 
-请求方式	类型	内容	备注
-POST	HttpRedirect	reverse('account:login')	成功
-POST	HttpResponse	fail	失败
-GET	json	{'form': user_form, 'proform': userpro_form}	account/register.html
-备注 
-2、修改个人信息
-简要描述： 
-•	用户修改个人信息接口
-请求URL： 
-•	` http://localhost:8000/account/edit/
-请求方式：
-•	POST GET
-参数： 
-表单	参数名	必选	类型	说明
-user_form	username	是	string	用户名
-user_form	email	是	string	邮件
-userprofile_form	phone	否	string	电话
-userprofile_form	company	否	string	工作单位
-userprofile_form	selfpro	否	text	个人简介
-返回参数说明 
-请求方式	类型	内容	备注
-POST	HttpRedirect	reverse('account:self')	成功
-GET	json	{"user_form": user_form, "userprofile_form": userprofile_form}	account/edit.html
-备注 
-欢迎使用ShowDoc！
-3、个人信息展示
-简要描述： 
-•	个人信息展示接口
-请求URL： 
-•	http://localhost:8000/account/edit/
-请求方式：
-•	GET
-参数： 
-表单	参数名	必选	类型	说明
-user	username	是	string	用户名
-user	email	是	string	邮件
-proform	phone	否	string	电话
-proform	company	否	string	工作单位
-proform	selfpro	否	text	个人简介
-返回参数说明 
-请求方式	类型	内容	备注
-GET	json	{'user': request.user, 'proform': userpro}	account/myself.html
-备注 
+
+    
+**简要描述：** 
+
+- 用户注册接口
+
+**请求URL：** 
+- ` http://localhost:8000/account/register/
+  
+**请求方式：**
+- POST  GET
+
+**参数：** 
+
+|表单|参数名|必选|类型|说明|
+|:--|:----    |:---|:----- |-----   |
+|form|username |是  |string |用户名   |
+|form|password |是  |string | 密码    |
+|form|password2     |是  |string | 确认密码    |
+|form|email|是|string|邮件|
+|proform|phone|否|string|电话|
+|proform|company|否|string|工作单位|
+|proform|selfpro|否|text|个人简介|
+
+ **返回参数说明** 
+
+|请求方式|类型|内容|备注|
+|:-----  |:-----|:-----|:--                           |
+|POST|HttpRedirect   |reverse('account:login')  |成功|
+|POST|HttpResponse|fail|失败|
+|GET|json|{'form': user_form, 'proform': userpro_form}|account/register.html|
+ **备注** 
