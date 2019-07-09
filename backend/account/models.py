@@ -18,21 +18,22 @@ class User(models.Model):
 
 class RegisterForm(forms.Form):
     
-    name = forms.CharField(max_length=100,label='name',strip=True)
+    username = forms.CharField(max_length=100,label='name',strip=True)
     password = forms.CharField(max_length=16,label='password')
-    gender = forms.ChoiceField(choices=gender,label='sex')
+    repassword = forms.CharField(max_length=16,label='password')
+    sex = forms.ChoiceField(choices=gender,label='sex')
     email = forms.EmailField(label='email')
 
 class LoginForm(forms.Form):
 
-    name = forms.CharField(max_length=100,label='name',strip=True)
+    username = forms.CharField(max_length=100,label='name',strip=True)
     password = forms.CharField(max_length=16,label='password')
 
 class UpdateForm(forms.Form):
 
-    old_password = forms.CharField(max_length=16,label='password')
+    re_new_password = forms.CharField(max_length=16,label='password')
     new_password = forms.CharField(max_length=16,label='repassword')
-    new_gender = forms.ChoiceField(choices=gender,label='sex')
+    new_sex = forms.ChoiceField(choices=gender,label='sex')
     new_email = forms.EmailField(label='email')
 
 # Create your models here.

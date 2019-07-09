@@ -1,0 +1,53 @@
+1.编写了一个app：account
+	功能：注册，登录，注销账号，以及展示修改个人信息（性别与邮箱）
+2.url
+	account/  主页  
+	account/login 登录
+	account/register 注册
+	account/logout 注销
+	account/user_index 用户主页，可展示用户信息
+	account/update_user_index 用户更新信息界面
+3.模型
+	User 属性： name,password,sex,email
+	用于用户信息，其中password最大长度为16，sex只有三种选择male,female,unknown，默认为male
+	email为选填，且要求是邮箱格式
+	
+	RegisterForm 属性： name,repassword,password,sex,email
+	用于注册时从前端传递信息，需输入两次密码
+
+	LoginForm 属性： name,password
+	用于登录界面
+
+	UpdateForm 属性： re_new_password,new_password,new_sex,new_email
+	用于更新用户信息界面，需输入两次密码
+4.返回值
+/	
+	000：到达index主页
+	
+/login	
+	100：到达login登录界面
+	101：成功登录
+	102：密码错误
+	103：用户名不存在
+	104：非法输入
+
+/register
+	200：到达register注册界面
+	201：成功注册
+	202：非法输入
+	203：密码不匹配
+
+/logout
+	300：注销成功
+	301：登录已经中断
+
+/user_index
+	400：成功获取用户信息
+	401：未登录禁止访问
+
+/update_user_index
+	500：到达用户信息更新界面
+	501：未登录禁止访问
+	502：更新成功
+	503：两次密码不匹配
+	504：非法输
