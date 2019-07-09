@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import JsonResponse
+from user_profile.models import UserProfile
 
 
 # Create your views here.
@@ -114,7 +115,9 @@ def register_view(request):
                 ret_json['err_msg'] = 'This username has been used'
                 return JsonResponse(ret_json)
             else:
-                User.objects.create_user(username=username, password=password)
+                user = User.objects.create_user(username=username, password=password)
+                # creating user profile automatically
+                UserProfile.objects.create(user=user)
                 return JsonResponse(ret_json)
 
     else:
