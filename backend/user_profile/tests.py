@@ -31,4 +31,65 @@ class UserProfileTest(TestCase):
 
         self.assertJSONEqual(response.content, expect)
 
+        prof_json = {
+            'email': 'noob@mail.ustc.edu.cn',
+            'bio': 'A sophomore at USTC'
+        }
+
+        response = self.client.post(reverse('user_profile:edit', kwargs={
+            'username': 'kaleid-liner',
+        }), prof_json)
+
+        expect['email'] = prof_json['email']
+        expect['bio'] = prof_json['bio']
+
+        self.assertJSONEqual(response.content, expect)
+
+        response = self.client.get(reverse('user_profile:index', kwargs={
+            'username': 'kaleid-liner',
+        }))
+        self.assertJSONEqual(response.content, expect)
+
+    def test_edit_without_login(self):
+        expect = {
+            'err_code': 2,
+            'err_msg': 'Permission denied',
+        }
+
+        prof_json = {
+            'email': 'noob@mail.ustc.edu.cn',
+            'bio': 'A sophomore at USTC'
+        }
+
+        response = self.client.get(reverse('user_profile:edit', kwargs={
+            'username': 'Swordyu',
+        }), prof_json)
+
+        self.assertJSONEqual(response.content, expect)
+
+    def test_edit_other_profile(self):
+        expect = {
+            'err_code': 2,
+            'err_msg': 'Permission denied',
+        }
+
+        prof_json = {
+            'email': 'noob@mail.ustc.edu.cn',
+            'bio': 'A sophomore at USTC'
+        }
+
+        self.login()
+
+        response = self.client.get(reverse('user_profile:edit', kwargs={
+            'username': 'Swordyu',
+        }), prof_json)
+
+        self.assertJSONEqual(response.content, expect)
+
+
+
+
+
+
+
 
