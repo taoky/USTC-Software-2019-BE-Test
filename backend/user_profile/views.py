@@ -42,7 +42,6 @@ def index_view(request, username):
         return JsonResponse(ret_json)
 
 
-@login_required
 def edit_view(request, username):
     """
     edit the profile related to a user
@@ -67,7 +66,11 @@ def edit_view(request, username):
         'err_msg': '',
     }
 
-    # it's ok because login is required
+    if not request.user.is_authenticated:
+        ret_json['err_code'] = 2
+        ret_json['err_msg'] = 'Permission denied'
+        return JsonResponse(ret_json)
+
     expect_username = request.user.username
     if username != expect_username:
         ret_json['err_code'] = 2
