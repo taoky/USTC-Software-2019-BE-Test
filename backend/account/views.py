@@ -2,7 +2,6 @@ from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import JsonResponse
-from user_profile.models import UserProfile
 
 
 # Create your views here.
@@ -117,7 +116,7 @@ def register_view(request):
             else:
                 user = User.objects.create_user(username=username, password=password)
                 # creating user profile automatically
-                UserProfile.objects.create(user=user)
+                # UserProfile.objects.create(user=user)
                 return JsonResponse(ret_json)
 
     else:
