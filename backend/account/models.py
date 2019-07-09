@@ -16,7 +16,7 @@ class User(models.Model):
     def __str__(self):
         return self.name
 
-class UserForm(forms.Form):
+class RegisterForm(forms.Form):
     
     name = forms.CharField(max_length=100,label='name',strip=True)
     password = forms.CharField(max_length=16,label='password')
@@ -28,5 +28,11 @@ class LoginForm(forms.Form):
     name = forms.CharField(max_length=100,label='name',strip=True)
     password = forms.CharField(max_length=16,label='password')
 
+class UpdateForm(forms.Form):
+
+    old_password = forms.CharField(max_length=16,label='password')
+    new_password = forms.CharField(max_length=16,label='repassword')
+    new_gender = forms.ChoiceField(choices=gender,label='sex')
+    new_email = forms.EmailField(label='email')
 
 # Create your models here.
