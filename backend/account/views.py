@@ -12,11 +12,12 @@ def login_view(request):
     and I refer to last year's requirements)
     :param request:
     :return: JsonResponse
-    | err_code |             err_msg              |               description                |
-    | :------: | :------------------------------: | :--------------------------------------: |
-    |    0     |                ''                |                 Success                  |
-    |    1     | 'No such user or wrong password' |     Wrong username or wrong password     |
-    |    2     |   'Please logout before login'   | You haven't logged out before logging in |
+    | err_code |               err_msg                |               description                |
+    | :------: | :----------------------------------: | :--------------------------------------: |
+    |    0     |                  ''                  |                 Success                  |
+    |    1     |   'No such user or wrong password'   |     Wrong username or wrong password     |
+    |    2     |     'Please logout before login'     | You haven't logged out before logging in |
+    |    3     | 'Please enter username and password' |     Not type in username or password     |
     """
     ret_json = {
         'err_code': 0,
@@ -29,8 +30,14 @@ def login_view(request):
         ret_json['err_msg'] = 'Please logout before login'
 
         if request.method == 'POST':
-            username = request.POST['username']
-            password = request.POST['password']
+            try:
+                username = request.POST['username']
+                password = request.POST['password']
+            except KeyError:
+                ret_json['err_code'] = 3
+                ret_json['err_msg'] = 'Please enter username and password'
+                return JsonResponse(ret_json)
+
             user = authenticate(request=request, username=username, password=password)
 
             if user is not None:
