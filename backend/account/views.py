@@ -110,4 +110,7 @@ def register_view(request):
                 User.objects.create_user(username=username, password=password)
                 return JsonResponse(ret_json)
 
+    else:
+        return JsonResponse(ret_json)
+
 
