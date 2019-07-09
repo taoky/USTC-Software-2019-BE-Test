@@ -48,4 +48,46 @@ class AccountTest(TestCase):
 
         self.assertJSONEqual(response.content, expect)
 
+    def test_register_success(self):
+        expect = {
+            'err_code': 0,
+            'err_msg': '',
+        }
+
+        response = self.client.post(reverse('account:register'), {
+            'username': 'Swordyu',
+            'password': 'Swordyu',
+        })
+        self.assertJSONEqual(response.content, expect)
+
+        response = self.client.post(reverse('account:login'), {
+            'username': 'Swordyu',
+            'password': 'Swordyu',
+        })
+        self.assertJSONEqual(response.content, expect)
+
+    def test_logout_failed(self):
+        expect = {
+            'err_code': 1,
+            'err_msg': 'Logout before login'
+        }
+
+        response = self.client.get(reverse('account:logout'))
+        self.assertJSONEqual(response.content, expect)
+
+    def test_logout_success(self):
+        expect = {
+            'err_code': 0,
+            'err_msg': '',
+        }
+
+        self.client.post(reverse('account:login'), {
+            'username': 'kaleid-liner',
+            'password': '123456',
+        })
+
+        response = self.client.get(reverse('account:logout'))
+        self.assertJSONEqual(response.content, expect)
+
+
 
