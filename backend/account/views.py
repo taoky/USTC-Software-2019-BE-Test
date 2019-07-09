@@ -28,7 +28,7 @@ def login_view(request):
     if request.user.is_authenticated:
         ret_json['err_code'] = 2
         ret_json['err_msg'] = 'Please logout before login'
-
+    else:
         if request.method == 'POST':
             try:
                 username = request.POST['username']
