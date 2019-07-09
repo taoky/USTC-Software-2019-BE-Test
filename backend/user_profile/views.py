@@ -102,6 +102,7 @@ def edit_view(request, username):
         return JsonResponse(ret_json)
 
 
+# Django post_save signal: create profile for the user whenever a user is created
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
