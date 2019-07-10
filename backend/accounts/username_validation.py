@@ -39,7 +39,6 @@ class NoneTypeObjectValidator:
 
 
 username_validators = [
-    NoneTypeObjectValidator,
     ConflictUsernameValidator,
     SpecialSymbolValidator
 ]
@@ -52,6 +51,10 @@ def validate_username(username, check_conflict):
         username<str>:  用户提交的数据中的用户名
         check_conflict<bool>:   是否检查用户名已存在，在注册账户时请打开此开关
     '''
+    try:
+        NoneTypeObjectValidator.validate(username)
+    except ValidationError as e:
+        raise ValidationError([e])
     errors = []
     validators = username_validators.copy()
     if not check_conflict:
