@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-30 18:15+0800\n"
+"POT-Creation-Date: 2019-07-10 13:04+0800\n"
 "PO-Revision-Date: 2019-6-28 15:01+8\n"
 "Last-Translator: Elsa Granger <zeyugao@outlook.com>\n"
 "Language-Team: Elsa <LL@li.org>\n"
@@ -16,35 +16,37 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: .\msg\middleware.py:23
-msgid "Can not parse the data to json"
-msgstr "无法将数据解析为json"
+#: .\msg\views.py:50 .\msg\views.py:186
+msgid "The delay_time can not be minus"
+msgstr "推迟时间不能为负"
 
-#: .\msg\middleware.py:28
-msgid "PUT method require content_type=\"application/json\" in header"
-msgstr "PUT方法要求在header中添加content_type=\"application/json\""
-
-#: .\msg\views.py:62
+#: .\msg\views.py:69 .\msg\views.py:203
 msgid "Incorrect delay_time format"
 msgstr "延迟时间格式错误"
 
-#: .\msg\views.py:78
+#: .\msg\views.py:85
 msgid "Create message successfully"
 msgstr "创建消息成功"
 
-#: .\msg\views.py:116 .\msg\views.py:133 .\msg\views.py:160 .\msg\views.py:206
-#: .\msg\views.py:228 .\msg\views.py:247
+#: .\msg\views.py:123 .\msg\views.py:140 .\msg\views.py:168 .\msg\views.py:228
+#: .\msg\views.py:250 .\msg\views.py:269
 msgid "Message not found"
 msgstr "无法找到消息"
 
-#: .\msg\views.py:123 .\msg\views.py:168 .\msg\views.py:236
+#: .\msg\views.py:130 .\msg\views.py:176 .\msg\views.py:258
 msgid "Access denied"
 msgstr "拒绝访问"
 
-#: .\msg\views.py:201
+#: .\msg\views.py:223
 msgid "Edit message successfully"
 msgstr "修改消息成功"
 
-#: .\msg\views.py:242
+#: .\msg\views.py:264
 msgid "Delete message successfully"
 msgstr "删除消息成功"
+
+#~ msgid "Can not parse the data to json"
+#~ msgstr "无法将数据解析为json"
+
+#~ msgid "PUT method require content_type=\"application/json\" in header"
+#~ msgstr "PUT方法要求在header中添加content_type=\"application/json\""
