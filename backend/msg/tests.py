@@ -48,8 +48,8 @@ class MsgModelTest(TestCase):
         body = json.loads(resp.content)
 
         self.assertEqual(body['code'], 200)
-        self.assertEqual(body['content'][0]['content'], '1234567890test@aa')
-        self.assertEqual(body['content'][0]['user'], 'abcd')
+        self.assertEqual(body['msg'][0]['content'], '1234567890test@aa')
+        self.assertEqual(body['msg'][0]['user'], 'abcd')
 
     def test_show_my_message(self):
         c = self.register_and_login()
@@ -67,8 +67,8 @@ class MsgModelTest(TestCase):
         body = json.loads(resp.content)
 
         self.assertEqual(body['code'], 200)
-        self.assertEqual(body['content'][0]['content'], '1234567890test@aa')
-        self.assertEqual(body['content'][0]['user'], 'abcd')
+        self.assertEqual(body['msg'][0]['content'], '1234567890test@aa')
+        self.assertEqual(body['msg'][0]['user'], 'abcd')
 
         msg_data = {
             'content': 'niegoj3gi',
@@ -82,12 +82,12 @@ class MsgModelTest(TestCase):
         resp = c.get(reverse('msg:my_message'), data=msg_data)
         body = json.loads(resp.content)
         self.assertEqual(body['code'], 200)
-        self.assertEqual(len(body['content']), 1)
+        self.assertEqual(len(body['msg']), 1)
 
         resp = c.get(reverse('msg:my_all_message'), data=msg_data)
         body = json.loads(resp.content)
         self.assertEqual(body['code'], 200)
-        self.assertEqual(len(body['content']), 2)
+        self.assertEqual(len(body['msg']), 2)
 
     def test_all_message(self):
         c = self.register_and_login()
@@ -121,7 +121,7 @@ class MsgModelTest(TestCase):
         resp = c.get(reverse('msg:all_message'), data=msg_data)
         body = json.loads(resp.content)
         self.assertEqual(body['code'], 200)
-        self.assertEqual(len(body['content']), 1)
+        self.assertEqual(len(body['msg']), 1)
 
     def test_message_detail(self):
         c = self.register_and_login()
@@ -138,16 +138,17 @@ class MsgModelTest(TestCase):
         resp = c.get(reverse('msg:my_message'), data=msg_data)
         body = json.loads(resp.content)
         self.assertEqual(body['code'], 200)
-        self.assertEqual(len(body['content']), 1)
+        self.assertEqual(len(body['msg']), 1)
 
-        uuid = body['content'][0]['uuid']
+        uuid = body['msg'][0]['uuid']
 
         resp = c.get(reverse('msg:message_detail', args=(uuid,)))
         body = json.loads(resp.content)
+
         self.assertEqual(body['code'], 200)
-        self.assertEqual(body['content']['content'], '1234567890test@aa')
-        self.assertEqual(body['content']['uuid'], uuid)
-        self.assertEqual(body['content']['user'], 'abcd')
+        self.assertEqual(body['msg']['content'], '1234567890test@aa')
+        self.assertEqual(body['msg']['uuid'], uuid)
+        self.assertEqual(body['msg']['user'], 'abcd')
 
     def test_message_detail_with_invaild_uuid(self):
         c = self.register_and_login()
@@ -203,9 +204,9 @@ class MsgModelTest(TestCase):
         resp = c.get(reverse('msg:my_message'), data=msg_data)
         body = json.loads(resp.content)
         self.assertEqual(body['code'], 200)
-        self.assertEqual(len(body['content']), 1)
+        self.assertEqual(len(body['msg']), 1)
 
-        uuid = body['content'][0]['uuid']
+        uuid = body['msg'][0]['uuid']
 
         # logout
         resp = c.post(reverse('accounts:logout'))
@@ -246,11 +247,11 @@ class MsgModelTest(TestCase):
         resp = c.get(reverse('msg:my_message'), data=msg_data)
         body = json.loads(resp.content)
         self.assertEqual(body['code'], 200)
-        self.assertEqual(len(body['content']), 1)
+        self.assertEqual(len(body['msg']), 1)
 
-        old_edit_time = body['content'][0]['edit_time']
+        old_edit_time = body['msg'][0]['edit_time']
 
-        uuid = body['content'][0]['uuid']
+        uuid = body['msg'][0]['uuid']
 
         new_msg_data = msg_data.copy()
         new_msg_data['content'] = 'adasf34g34g34'
@@ -266,10 +267,10 @@ class MsgModelTest(TestCase):
         resp = c.get(reverse('msg:my_message'), data=msg_data)
         body = json.loads(resp.content)
         self.assertEqual(body['code'], 200)
-        self.assertEqual(len(body['content']), 1)
+        self.assertEqual(len(body['msg']), 1)
 
-        self.assertNotEqual(body['content'][0]['edit_time'], old_edit_time)
-        self.assertEqual(body['content'][0]['content'], 'adasf34g34g34')
+        self.assertNotEqual(body['msg'][0]['edit_time'], old_edit_time)
+        self.assertEqual(body['msg'][0]['content'], 'adasf34g34g34')
 
     def test_delete_message(self):
         c = self.register_and_login()
@@ -286,9 +287,9 @@ class MsgModelTest(TestCase):
         resp = c.get(reverse('msg:my_message'), data=msg_data)
         body = json.loads(resp.content)
         self.assertEqual(body['code'], 200)
-        self.assertEqual(len(body['content']), 1)
+        self.assertEqual(len(body['msg']), 1)
 
-        uuid = body['content'][0]['uuid']
+        uuid = body['msg'][0]['uuid']
 
         resp = c.delete(reverse('msg:message_detail', args=(uuid,)))
         body = json.loads(resp.content)
@@ -299,4 +300,4 @@ class MsgModelTest(TestCase):
         resp = c.get(reverse('msg:my_message'), data=msg_data)
         body = json.loads(resp.content)
         self.assertEqual(body['code'], 200)
-        self.assertEqual(len(body['content']), 0)
+        self.assertEqual(len(body['msg']), 0)

@@ -33,11 +33,12 @@ class CreateMessageView(LoginRequiredMixin, View):
         @return in JSON
             code<int>: 返回代码
                        可能值及其含义
-                       | 返回值 | 含义     |
-                       | ------ | -------- |
-                       | 200    | 创建成功 |
-                       | 401    | 未登录   |
-            msg<dict>:  返回代码相应的解释
+                       | 返回值 | 含义             |
+                       | ------ | ---------------- |
+                       | 200    | 创建成功         |
+                       | 401    | 未登录           |
+                       | 410    | 延迟时间格式有误 |
+            msg<list>:  返回代码相应的解释
         '''
         delay_time = request.POST.get('delay_time', '0:0:0:0')
         content = request.POST.get('content', '')
@@ -99,7 +100,7 @@ class MessageDetailView(LoginRequiredMixin, View):
                        | ------ | -------- |
                        | 200    | 获取成功 |
                        | 401    | 未登录   |
-            content<dcit>:  内容如下
+            msg<list>:  内容如下
                        | 参数名称    | 类型 | 描述           |
                        | ----------- | ---- | -------------- |
                        | content     | str  | 消息的内容     |
@@ -152,7 +153,8 @@ class MessageDetailView(LoginRequiredMixin, View):
                        | 401    | 未登录             |
                        | 403    | 不是这条消息的作者 |
                        | 404    | 输入的uuid有误     |
-            msg<dict>:  返回代码相应的解释
+                       | 410    | 延迟时间格式错误   |
+            msg<list>:  返回代码相应的解释
         '''
         if not uuid:
             return JsonResponse({
@@ -171,15 +173,22 @@ class MessageDetailView(LoginRequiredMixin, View):
             delay_time = request.PUT.get('delay_time', '0:0:0:0')
             content = request.PUT.get('content', message.content)
             public = request.PUT.get('public', message.public)
-
-            days, hours, minutes, seconds = list(
-                map(int,
-                    map(lambda x: x or 0,
-                        re.findall(
-                            '([0-9]+):([0-9]+):([0-9]+):([0-9]+)', delay_time)[0]
+            try:
+                days, hours, minutes, seconds = list(
+                    map(int,
+                        map(lambda x: x or 0,
+                            re.findall(
+                                '([0-9]+):([0-9]+):([0-9]+):([0-9]+)', delay_time)[0]
+                            )
                         )
-                    )
-            )
+                )
+            except (IndexError, ValueError):
+                # IndexError用于处理格式不正确的情况，即延迟时间中没有三个":"
+                # ValueError用于处理冒号之间的内容不是数字或者缺省的情况
+                return JsonResponse({
+                    'code': 410,
+                    'msg': [_('Incorrect delay_time format')]
+                })
 
             delta_time = datetime.timedelta(
                 days=days,
@@ -220,7 +229,7 @@ class MessageDetailView(LoginRequiredMixin, View):
                        | 401    | 未登录             |
                        | 403    | 不是这条消息的作者 |
                        | 404    | 输入的uuid有误     |
-            msg<dict>:  返回代码相应的解释
+            msg<list>:  返回代码相应的解释
         '''
         if not uuid:
             return JsonResponse({
