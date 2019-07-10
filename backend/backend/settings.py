@@ -50,7 +50,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
-    'msg.middleware.JSONParsingMiddleware',
+    'backend.middleware.JSONParsingMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'

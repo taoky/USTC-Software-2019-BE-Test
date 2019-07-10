@@ -19,11 +19,11 @@ class JSONParsingMiddleware(MiddlewareMixin):
                     request.PUT = json.loads(request.body)
                 except ValueError as e:
                     return JsonResponse({
-                        'code': 400,
+                        'code': 430,
                         'msg': [_('Can not parse the data to json'), str(e)]
                     })
             else:
                 return JsonResponse({
-                    'code': 400,
+                    'code': 431,
                     'msg': [_('PUT method require content_type="application/json" in header')]
                 })
