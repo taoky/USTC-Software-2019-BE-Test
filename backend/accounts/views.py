@@ -215,9 +215,9 @@ class ProfileView(LoginRequiredMixin, View):
             'phone_number': user.phone_number
         })
 
-    def post(self, request):
+    def put(self, request):
         '''
-        处理用户对于```/accounts/profile```的post请求
+        处理用户对于```/accounts/profile```的put请求
         处理用户修改个人信息的请求
 
         @param in POST
@@ -233,12 +233,12 @@ class ProfileView(LoginRequiredMixin, View):
                        | 401    | 未登录                 |
             msg<str>:  返回代码相应的解释
         '''
-        nickname = request.POST.get('nickname')
-        phone_number = request.POST.get('phone_number')
+        nickname = request.PUT.get('nickname')
+        phone_number = request.PUT.get('phone_number')
 
         if phone_number and not re.search('^[0-9-+]*$', phone_number):
             return JsonResponse({
-                'code': 400,
+                'code': 402,
                 'msg': [_('Invalid phone number')]
             })
 
