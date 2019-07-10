@@ -10,7 +10,11 @@ def login_view(request):
     login to your account
     (I use django built-in authentication system,
     and I refer to last year's requirements)
-    :param request:
+    :param request: request.POST need to contain
+    |  property  | description |
+    | :--------: | :---------: |
+    | 'username' |  username   |
+    | 'password' |  password   |
     :return: JsonResponse
     | err_code |               err_msg                |               description                |
     | :------: | :----------------------------------: | :--------------------------------------: |

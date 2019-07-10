@@ -65,12 +65,12 @@ def create_view(request, username):
                             "21 01:01:01": 21 days and 3661 seconds)
     :param username: username of the message
     :return:
-    | err_code |       err_msg       |                         description                          | Other Properties |
-    | :------: | :-----------------: | :----------------------------------------------------------: | :--------------: |
-    |    0     |         ''          |                           Success                            |        -         |
-    |    1     |   'No such user'    |                         No such user                         |        -         |
-    |    2     | 'Permission denied' | You haven't logged in or you have no access to messages.     |        -         |
-    |    3     | 'Parameter missing' | You have to pass in duration.                                |        -         |
+    | err_code |       err_msg       |                         description                          |
+    | :------: | :-----------------: | :----------------------------------------------------------: |
+    |    0     |         ''          |                           Success                            |
+    |    1     |   'No such user'    |                         No such user                         |
+    |    2     | 'Permission denied' | You haven't logged in or you have no access to messages.     |
+    |    3     | 'Parameter missing' | Not used.                                                    |
     """
     ret_json = {
         'err_code': 0,
