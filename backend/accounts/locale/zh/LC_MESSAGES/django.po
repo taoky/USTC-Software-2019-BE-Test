@@ -1,0 +1,61 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-07-10 13:04+0800\n"
+"PO-Revision-Date: 2019-6-28 15:01+8\n"
+"Last-Translator: Elsa Granger <zeyugao@outlook.com>\n"
+"Language-Team: Elsa <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: .\accounts\username_validation.py:18
+msgid "Username already exists"
+msgstr "用户名已经被注册了"
+
+#: .\accounts\username_validation.py:28
+msgid "Username can not contain special symbol"
+msgstr "用户名中不允许包含特殊字符"
+
+#: .\accounts\username_validation.py:38
+msgid "Please input the username"
+msgstr "请输入用户名"
+
+#: .\accounts\views.py:69
+msgid "Log in successfully"
+msgstr "登录成功"
+
+#: .\accounts\views.py:74
+msgid "Username or password is not correct"
+msgstr "用户名或者密码错误"
+
+#: .\accounts\views.py:132
+msgid "Register successfully"
+msgstr "注册成功"
+
+#: .\accounts\views.py:180
+msgid "Change password successfully"
+msgstr "密码修改成功"
+
+#: .\accounts\views.py:185
+msgid "The old password is not correct"
+msgstr "旧密码错误"
+
+#: .\accounts\views.py:242
+msgid "Invalid phone number"
+msgstr "无效的电话"
+
+#: .\accounts\views.py:253
+msgid "Update profile successfully"
+msgstr "修改个人信息成功"
+
+#: .\accounts\views.py:281
+msgid "Log out successfully"
+msgstr "退出成功"
