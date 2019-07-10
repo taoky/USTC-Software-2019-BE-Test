@@ -44,6 +44,12 @@ class CreateMessageView(LoginRequiredMixin, View):
         content = request.POST.get('content', '')
         public = request.POST.get('public', False) in (True, 'True')
 
+        if delay_time.find('-') >= 0:
+            return JsonResponse({
+                'code': 411,
+                'msg': [_('The delay_time can not be minus')]
+            })
+
         try:
             # 提交上来的延迟时间格式化为天、小时、分钟、秒
             # 提交的延迟时间格式为DD:HH:MM:SS
@@ -173,6 +179,13 @@ class MessageDetailView(LoginRequiredMixin, View):
             delay_time = request.PUT.get('delay_time', '0:0:0:0')
             content = request.PUT.get('content', message.content)
             public = request.PUT.get('public', message.public)
+
+            if delay_time.find('-') >= 0:
+                return JsonResponse({
+                    'code': 411,
+                    'msg': [_('The delay_time can not be minus')]
+                })
+
             try:
                 days, hours, minutes, seconds = list(
                     map(int,
