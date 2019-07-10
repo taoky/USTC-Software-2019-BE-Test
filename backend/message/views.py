@@ -85,7 +85,7 @@ def create_view(request, username):
             ret_json['err_msg'] = 'No such user'
             return JsonResponse(ret_json)
         else:
-            duration = request.POST.get() or '0'
+            duration = request.POST.get('duration') or '0'
             content = request.POST.get('msg_content') # it's ok to be none
             duration = dateparse.parse_duration(duration)
             created_time = datetime.now()
