@@ -2,11 +2,13 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
-from django.utils import dateparse
+from django.utils import dateparse, timezone
 
 from datetime import datetime
 
 from .models import Message
+
+import pytz
 
 
 # Create your views here.
@@ -39,11 +41,14 @@ def index_view(request, username):
     except ObjectDoesNotExist:
         ret_json['err_code'] = 1
         ret_json['err_msg'] = 'No such user'
-        return JsonResponse(ret_json)
     else:
-        messages = list(user.message_set.filter(available_time__lt=datetime.now()))
-        ret_json['messages'] = messages
-        return JsonResponse(ret_json)
+        messages = list(user.message_set.filter(available_time__lt=timezone.now()))  # timezone aware
+        ret_json['messages'] = [{
+            'content': msg.content,
+            'created_time': str(msg.created_time),
+        } for msg in messages]
+
+    return JsonResponse(ret_json)
 
 
 def create_view(request, username):
@@ -83,18 +88,19 @@ def create_view(request, username):
         except ObjectDoesNotExist:
             ret_json['err_code'] = 1
             ret_json['err_msg'] = 'No such user'
-            return JsonResponse(ret_json)
         else:
             duration = request.POST.get('duration') or '0'
-            content = request.POST.get('msg_content') # it's ok to be none
+            content = request.POST.get('msg_content')  # it's ok to be none
             duration = dateparse.parse_duration(duration)
-            created_time = datetime.now()
+            created_time = timezone.now()  # timezone aware datetime objects
             available_time = created_time + duration
 
             Message.objects.create(user=user,
                                    content=content,
                                    created_time=created_time,
                                    available_time=available_time)
+
+        return JsonResponse(ret_json)
 
     else:
         return JsonResponse(ret_json)
