@@ -1,5 +1,7 @@
 # backend
 
+[![Build Status](https://travis-ci.org/kaleid-liner/USTC-Software-2019-BE-Test.svg?branch=master)](https://travis-ci.org/kaleid-liner/USTC-Software-2019-BE-Test)
+
 ## 功能
 
 - `account`: 登陆，登出，注册账号
