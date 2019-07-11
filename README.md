@@ -59,4 +59,53 @@
 
 ## 报告（需要完成）
 
-请将你为前端组的同学撰写的报告放在这里。
+1.该框架含有一个app，app名称为accounts
+2.app有两个主要功能：
+  (1).注册、登录、登出一个用户，注册同时进入用户的主页
+  (2).创建、显示、修改、增加用户个人信息名称detail及对应内容information
+3.urls：
+  users/register/ 注册用户
+  users/login/ 登录用户
+  users/logout/ 登出用户
+  默认端口 账户主页
+  details/ 信息名称
+  new_detail/ 添加新信息名称
+  details/id（当前信息名称编号）/ 显示当前用户的具体信息
+  new_information/id（当前信息名称编号）/ 为该信息名称添加信息
+  edit_information/id(当前信息编号）/ 修改该条信息
+4.包含内容：
+  (1).用户部分，request中包含有：
+    username
+    password
+    password_re(仅在regist时使用，用于验证两次密码是否一致)
+  (2)消息部分，request中包含有：
+    username(作为detail_id使用)
+    detail_id
+    information_id
+5.错误码：
+  (1).register
+    300：注册并登陆成功
+    301：输入非法
+  (2).login
+    100：登陆成功
+    101：用户名或密码错误
+    102：输入非法
+  (3).logout_view
+    200：登出成功
+  (4).details
+    400：details（信息名称）显示成功
+  (5).detail
+    500：该信息名称不属于当前用户
+    501：detail显示成功
+  (6).new_detail
+    600：detail创建成功
+    601：输入非法
+  (7).new_information
+    700：信息添加成功
+    701：输入非法
+  (8).edit_information
+    800：该信息不属于当前用户
+    801：编辑成功
+    802：输入非法
+  (9).
+    4.3：request类型不是POST
