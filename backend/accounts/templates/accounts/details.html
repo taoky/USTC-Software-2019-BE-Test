@@ -1,0 +1,19 @@
+{% extends "accounts/base.html" %}
+
+{% block content %}
+
+    <p>Details</p>
+
+    <ul>
+        {% for detail in details %}
+            <li>
+                <a href="{% url 'accounts:detail' detail.id %}">{{ detail }}</a>
+            </li>
+        {% empty %}
+            <li>No details have been added yet.</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'accounts:new_detail' %}">Add a new detail:</a>
+
+{% endblock content %}

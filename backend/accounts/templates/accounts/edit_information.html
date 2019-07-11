@@ -1,0 +1,15 @@
+{% extends "accounts/base.html" %}
+
+{% block content %}
+
+    <p><a href="{% url 'accounts:detail' detail.id %}">{{ detail }}</a></p>
+
+    <p>Edit information:</p>
+
+    <form action="{% url 'accounts:edit_information' information.id %}" method='post'>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button name="submit">save changes</button>
+    </form>
+
+{% endblock content %}

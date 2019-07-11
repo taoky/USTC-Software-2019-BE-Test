@@ -1,0 +1,13 @@
+{% extends "accounts/base.html" %}
+
+{% block content %}
+
+    <p>Add a new detail</p>
+
+    <form action="{% url 'accounts:new_detail' %}" method='post'>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button name="submit">add detail</button>
+    </form>
+
+{% endblock content %}
