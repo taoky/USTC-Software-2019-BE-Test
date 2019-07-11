@@ -1,0 +1,23 @@
+language: python
+
+dist: xenial
+
+python:
+    - "3.6"
+
+env:
+    global:
+        - DJANGO_SETTINGS_MODULE="travis_ci.settings"
+
+before_install:
+    - cd backend
+
+branches:
+    only:
+        - master
+
+install:
+    - pip install -r requirements.txt
+
+script:
+    - python manage.py test
