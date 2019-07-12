@@ -1,0 +1,25 @@
+{% extends "accounts/base.html" %}
+
+{% block content %}
+
+    <p>Detail: {{ detail }}</p>
+    <p>information:</p>
+
+    <ul>
+        {% for information in informations %}
+            <li>
+                {{ information }}
+                <p>
+                    <a href="{% url 'accounts:edit_information' information.id  %}">edit information</a>
+                </p>
+            </li>
+        {% empty %}
+            <li>No information has been added yet.</li>
+        {% endfor %}
+    <p>
+        <a href="{% url 'accounts:new_information' detail.id  %}">add new information</a>
+    </p>
+
+    </ul>
+
+{% endblock content %}

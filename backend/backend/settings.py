@@ -37,7 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'accounts',
+    'users',
 ]
+# 我的设置
+LOGIN_URL = '/users/login/'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
